@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_supplier');
+            $table->string('nama_pelanggan');
             $table->text('alamat')->nullable();
             $table->string('no_telepon', 20)->nullable();
             $table->string('email')->nullable();
-            $table->text('keterangan')->nullable();
+            $table->enum('jenis_pelanggan', ['retail', 'reseller', 'cafe'])->default('retail');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('pelanggans');
     }
 };

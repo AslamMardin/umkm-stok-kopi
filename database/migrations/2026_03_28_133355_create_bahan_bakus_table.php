@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('bahan_bakus', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_supplier');
-            $table->text('alamat')->nullable();
-            $table->string('no_telepon', 20)->nullable();
-            $table->string('email')->nullable();
+            $table->string('nama_bahan');               // Green Bean Arabika, dll
+            $table->string('satuan')->default('kg');
+            $table->decimal('stok', 10, 2)->default(0);
+            $table->decimal('stok_minimum', 10, 2)->default(10);
+            $table->decimal('harga_beli', 12, 2)->default(0);
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('bahan_bakus');
     }
 };
