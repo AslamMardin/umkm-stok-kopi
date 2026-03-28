@@ -27,7 +27,7 @@
                     <th class="text-center">Stok Minimum</th>
                     <th class="text-center">Status</th>
                     <th>Harga Beli/kg</th>
-                    <th>Aksi</th>
+                    {{-- <th>Aksi</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -49,11 +49,11 @@
                         @endif
                     </td>
                     <td>Rp {{ number_format($bb->harga_beli, 0, ',', '.') }}</td>
-                    <td>
+                    {{-- <td>
                         <a href="{{ route('stok.bahan-baku', $bb) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-clock-history"></i> Riwayat
                         </a>
-                    </td>
+                    </td> --}}
                 </tr>
                 @empty
                 <tr><td colspan="6" class="text-center text-muted py-3">Belum ada data bahan baku.</td></tr>
@@ -83,7 +83,7 @@
                     <th class="text-center">Min. Stok</th>
                     <th class="text-center">Status</th>
                     <th>Harga Jual</th>
-                    <th>Aksi</th>
+                    {{-- <th>Aksi</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -111,11 +111,11 @@
                         @endif
                     </td>
                     <td>Rp {{ number_format($pk->harga_jual, 0, ',', '.') }}</td>
-                    <td>
+                    {{-- <td>
                         <a href="{{ route('stok.produk', $pk) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-clock-history"></i> Riwayat
                         </a>
-                    </td>
+                    </td> --}}
                 </tr>
                 @empty
                 <tr><td colspan="9" class="text-center text-muted py-3">Belum ada data produk.</td></tr>

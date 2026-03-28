@@ -12,13 +12,13 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name'     => 'Admin UMKM Kopi',
-            'email'    => 'admin@kopipwm.com',
+            'email'    => 'admin@kopi.com',
             'password' => Hash::make('password123'),
         ]);
 
         User::create([
             'name'     => 'Staf Gudang',
-            'email'    => 'gudang@kopipwm.com',
+            'email'    => 'gudang@kopi.com',
             'password' => Hash::make('password123'),
         ]);
     }

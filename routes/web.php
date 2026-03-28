@@ -3,6 +3,7 @@
 // FILE: routes/web.php
 // =============================================================
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianBahanBakuController;
 use App\Http\Controllers\PenjualanController;
@@ -16,7 +17,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+
+
+
 Route::get('/', fn() => redirect()->route('dashboard'));
+
+// Login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
 
@@ -74,5 +83,3 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-// Autentikasi default Laravel (jika menggunakan Breeze/Jetstream)
-require __DIR__ . '/auth.php';
