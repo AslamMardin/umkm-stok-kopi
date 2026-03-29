@@ -1,58 +1,122 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buka browser ke `http://localhost:8000`, login dengan:
+- Email: `admin@kopipwm.com`
+- Password: `password123`
 
-## Contributing
+---
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Fungsi Pembelian, Produksi, dan Penjualan
 
-## Code of Conduct
+Ini adalah **tiga inti utama** sistem. Ketiganya saling terhubung lewat stok.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### 🛒 PEMBELIAN — "Stok Bahan Baku Masuk"
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Fungsinya:** Mencatat setiap kali kamu membeli biji kopi mentah (green bean) atau bahan lain dari petani/supplier.
 
-## License
+**Kenapa penting:** Ini adalah **pintu masuk pertama** bahan baku ke gudang kamu. Tanpa mencatat pembelian, sistem tidak tahu kamu punya stok bahan baku berapa.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Alurnya:**
+```
+Catat Pembelian (status: pending)
+        ↓
+Barang tiba di gudang
+        ↓
+Klik "Terima Barang"
+        ↓
+Stok bahan baku otomatis bertambah ✅
+```
+
+**Contoh nyata:**
+
+Senin pagi kamu pesan 100 kg Green Bean Robusta dari Koperasi Tani Maju seharga Rp 35.000/kg. Kamu catat di sistem, status masih `pending`. Selasa barang datang, kamu klik **Terima Barang** — otomatis stok Green Bean Robusta di sistem bertambah 100 kg.
+
+**Yang dicatat sistem:**
+- Dari supplier mana
+- Tanggal beli
+- Bahan apa saja, berapa kg, harga berapa per kg
+- Total harga keseluruhan
+- Siapa yang mencatat
+
+---
+
+### ⚙️ PRODUKSI — "Bahan Baku Jadi Produk"
+
+**Fungsinya:** Mencatat proses mengubah green bean menjadi kopi siap jual — mulai dari roasting (sangrai) sampai packing (kemas).
+
+**Kenapa penting:** Ini adalah **jembatan** antara bahan baku dan produk jadi. Di sinilah stok bahan baku berkurang dan stok produk jadi bertambah secara bersamaan.
+
+**Alurnya:**
+```
+Catat Produksi (status: proses)
+        ↓
+Tulis: bahan apa yang dipakai + produk apa yang dihasilkan
+        ↓
+Proses sangrai/packing selesai
+        ↓
+Klik "Selesaikan Produksi"
+        ↓
+Stok bahan baku otomatis berkurang ✅
+Stok produk jadi otomatis bertambah ✅
+```
+
+**Contoh nyata:**
+
+Rabu kamu sangrai 20 kg Green Bean Arabika dan kemas hasilnya menjadi 85 bungkus Arabika Medium Roast 200g. Kamu catat di sistem:
+- Bahan masuk: Green Bean Arabika 20 kg
+- Produk keluar: Arabika Medium Roast 200g 85 pcs
+
+Setelah selesai, klik **Selesaikan** — stok green bean turun 20 kg, stok produk naik 85 pcs.
+
+**Jenis proses yang bisa dicatat:**
+
+| Jenis | Artinya |
+|---|---|
+| Roasting | Hanya sangrai, belum dikemas |
+| Packing | Hanya mengemas (dari roasted bean yang sudah ada) |
+| Roasting + Packing | Sangrai langsung dikemas dalam satu batch |
+
+---
+
+### 💰 PENJUALAN — "Stok Produk Keluar"
+
+**Fungsinya:** Mencatat setiap transaksi penjualan produk kopi yang sudah dikemas ke pelanggan.
+
+**Kenapa penting:** Ini adalah **pintu keluar** produk jadi dari gudang. Setiap penjualan yang dikonfirmasi akan otomatis mengurangi stok produk.
+
+**Alurnya:**
+```
+Catat Penjualan (status: pending)
+        ↓
+Pilih produk, jumlah, harga
+        ↓
+Pelanggan bayar
+        ↓
+Klik "Konfirmasi Lunas"
+        ↓
+Stok produk otomatis berkurang ✅
+```
+
+**Contoh nyata:**
+
+Jumat siang Kafe Mandar Coffee datang beli 20 bungkus Arabika Medium Roast 200g dan 10 bungkus Robusta Dark Roast 200g. Kamu catat di sistem, total Rp 1.690.000. Mereka bayar tunai, kamu klik **Konfirmasi Lunas** — stok kedua produk langsung berkurang otomatis.
+
+**Fitur tambahan penjualan:**
+- Bisa pilih pelanggan terdaftar atau pelanggan umum (walk-in)
+- Bisa tambah diskon per item atau diskon global
+- Pilihan metode bayar: Tunai, Transfer, COD
+- Jika ada kesalahan, bisa **dibatalkan** dan stok otomatis dikembalikan
+
+---
+
+## Hubungan Ketiganya
+```
+PEMBELIAN                PRODUKSI               PENJUALAN
+(Beli dari petani)  →  (Sangrai & Kemas)  →  (Jual ke pelanggan)
+      ↓                       ↓                      ↓
+Stok bahan baku         Bahan baku TURUN        Stok produk
+   NAIK ✅              Produk jadi NAIK ✅        TURUN ✅

@@ -23,9 +23,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn() => redirect()->route('dashboard'));
 
 // Login
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+});
 
 Route::middleware(['auth'])->group(function () {
 
@@ -81,5 +83,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/bahan-baku/{bahanBaku}', [StokController::class, 'bahanBaku'])->name('bahan-baku');
         Route::get('/produk/{produkKopi}',    [StokController::class, 'produkKopi'])->name('produk');
     });
+
+     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
