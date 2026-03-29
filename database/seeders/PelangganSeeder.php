@@ -26,14 +26,14 @@ class PelangganSeeder extends Seeder
                 'alamat'          => 'Pasar Sentral Polewali',
                 'no_telepon'      => '086789012345',
                 'email'           => null,
-                'jenis_pelanggan' => 'retail',
+                'jenis_pelanggan' => 'cafe',
             ],
             [
                 'nama_pelanggan'  => 'CV Kopi Nusantara',
                 'alamat'          => 'Jl. Gatot Subroto No. 8, Makassar',
                 'no_telepon'      => '087890123456',
                 'email'           => 'cv.kopinusantara@gmail.com',
-                'jenis_pelanggan' => 'reseller',
+                'jenis_pelanggan' => 'cafe',
             ],
         ];
 
