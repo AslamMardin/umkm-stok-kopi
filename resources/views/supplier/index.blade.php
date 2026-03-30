@@ -14,7 +14,7 @@
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Nama atau nomor telepon..." class="form-control">
             </div>
-            <button type="submit" class="btn btn-secondary">🔍 Cari</button>
+            <button type="submit" class="btn btn-secondary">Cari</button>
             @if(request('search'))
                 <a href="{{ route('supplier.index') }}" class="btn btn-secondary">✕ Reset</a>
             @endif

@@ -47,7 +47,7 @@
                 </div>
 
                 <div style="display:flex;gap:10px;">
-                    <button type="submit" class="btn btn-primary">💾 Simpan Supplier</button>
+                    <button type="submit" class="btn btn-primary">Simpan Supplier</button>
                     <a href="{{ route('supplier.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

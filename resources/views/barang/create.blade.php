@@ -64,7 +64,7 @@
                 </div>
 
                 <div style="display:flex;gap:10px;margin-top:8px;">
-                    <button type="submit" class="btn btn-primary">💾 Simpan Barang</button>
+                    <button type="submit" class="btn btn-primary">Simpan Barang</button>
                     <a href="{{ route('barang.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

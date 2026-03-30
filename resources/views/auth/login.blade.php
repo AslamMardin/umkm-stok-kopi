@@ -248,19 +248,12 @@
                 <span class="brand-icon">☕</span>
                 <div class="brand-name">SCM Kopi<br>UMKM</div>
                 <p class="brand-tagline">
-                    Sistem informasi manajemen rantai pasok untuk usaha kopi Anda — dari biji mentah hingga cangkir pelanggan.
+                    Sistem informasi pencatat manajemen rantai pasok untuk usaha kopi — dari biji mentah hingga penjualan.
                 </p>
             </div>
 
-            <div class="feature-list">
-                <div class="feature-item">Kelola stok bahan mentah & produk jadi</div>
-                <div class="feature-item">Catat pembelian dari supplier</div>
-                <div class="feature-item">Monitor proses produksi</div>
-                <div class="feature-item">Lacak penjualan & pendapatan</div>
-                <div class="feature-item">Laporan ringkasan SCM</div>
-            </div>
+            
 
-            <div class="login-year">© {{ date('Y') }} SCM Kopi UMKM</div>
         </div>
 
         {{-- ── Right: Form ── --}}

@@ -23,7 +23,8 @@
                     <option value="produk_jadi"  {{ request('type') == 'produk_jadi'  ? 'selected' : '' }}>Produk Jadi</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-secondary">🔍 Filter</button>
+            <button type="submit" class="btn btn-secondary">  <i class="fa-solid fa-filter"></i>
+ Cari</button>
             @if(request()->hasAny(['search','type']))
                 <a href="{{ route('barang.index') }}" class="btn btn-secondary">✕ Reset</a>
             @endif

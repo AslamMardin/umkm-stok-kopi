@@ -17,12 +17,12 @@
                 <label class="form-label" style="margin-bottom:5px;">Sampai Tanggal</label>
                 <input type="date" name="to" value="{{ request('to') }}" class="form-control">
             </div>
-            <button type="submit" class="btn btn-secondary">🔍 Filter</button>
+            <button type="submit" class="btn btn-secondary"> <i class="fa-solid fa-filter"></i> Filter</button>
             @if(request()->hasAny(['from','to']))
                 <a href="{{ route('produksi.index') }}" class="btn btn-secondary">✕ Reset</a>
             @endif
             <div style="margin-left:auto;">
-                <a href="{{ route('produksi.create') }}" class="btn btn-primary">⚙️ Catat Produksi</a>
+                <a href="{{ route('produksi.create') }}" class="btn btn-primary">Catat Produksi</a>
             </div>
         </form>
     </div>
@@ -30,14 +30,14 @@
 
 {{-- Penjelasan alur --}}
 <div style="background:linear-gradient(135deg,var(--cream),#efe8d5);border-radius:10px;padding:14px 18px;margin-bottom:20px;border-left:4px solid var(--caramel);font-size:13px;color:var(--roast);">
-    💡 <strong>Cara Kerja Produksi:</strong>
+    <strong>Cara Kerja Produksi:</strong>
     Saat produksi dicatat, stok <em>bahan mentah</em> akan otomatis <strong>dikurangi</strong>
     dan stok <em>produk jadi</em> akan otomatis <strong>bertambah</strong>.
 </div>
 
 <div class="card">
     <div class="card-header">
-        <div class="card-title">Log Batch Produksi</div>
+        <div class="card-title">Produksi</div>
         <span class="text-muted">{{ $produksis->total() }} batch</span>
     </div>
     <div class="table-wrap">

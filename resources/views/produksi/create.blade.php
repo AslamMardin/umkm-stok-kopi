@@ -6,7 +6,7 @@
 <div style="max-width:700px;">
     <div class="card">
         <div class="card-header">
-            <div class="card-title">⚙️ Form Produksi Baru</div>
+            <div class="card-title">Form Produksi Baru</div>
             <a href="{{ route('produksi.index') }}" class="btn btn-secondary btn-sm">← Kembali</a>
         </div>
         <div class="card-body">
@@ -121,7 +121,7 @@
                 </div>
 
                 <div style="display:flex;gap:10px;">
-                    <button type="submit" class="btn btn-primary">⚙️ Proses Produksi</button>
+                    <button type="submit" class="btn btn-primary">Proses Produksi</button>
                     <a href="{{ route('produksi.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

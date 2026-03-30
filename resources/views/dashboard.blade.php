@@ -3,54 +3,42 @@
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
 
+
+
+@push('styles')
+        <style>
+        /* Container biar rapi */
+.badge-container {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Khusus untuk stat dashboard */
+.stat-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+}
+
+/* Icon spacing */
+.stat-badge i {
+    margin-right: 6px;
+    font-size: 12px;
+}
+
+/* Hover biar interaktif */
+.stat-badge:hover {
+    transform: translateY(-1px);
+    transition: 0.2s;
+    cursor: default;
+}
+    </style>
+@endpush
+
+
 @section('content')
 
-{{-- ══════ STAT CARDS ══════ --}}
-<div class="stat-grid">
-    <div class="stat-card brown">
-        <div class="stat-icon">🌱</div>
-        <div class="stat-value">{{ $totalBahanMentah }}</div>
-        <div class="stat-label">Jenis Bahan Mentah</div>
-    </div>
-
-    <div class="stat-card green">
-        <div class="stat-icon">📦</div>
-        <div class="stat-value">{{ $totalProdukJadi }}</div>
-        <div class="stat-label">Jenis Produk Jadi</div>
-    </div>
-
-    <div class="stat-card blue">
-        <div class="stat-icon">🤝</div>
-        <div class="stat-value">{{ $totalSupplier }}</div>
-        <div class="stat-label">Supplier Aktif</div>
-    </div>
-
-    <div class="stat-card orange">
-        <div class="stat-icon">🛒</div>
-        <div class="stat-value">{{ $totalPembelian }}</div>
-        <div class="stat-label">Total Pembelian</div>
-    </div>
-
-    <div class="stat-card brown">
-        <div class="stat-icon">⚙️</div>
-        <div class="stat-value">{{ $totalProduksi }}</div>
-        <div class="stat-label">Batch Produksi</div>
-    </div>
-
-    <div class="stat-card green">
-        <div class="stat-icon">💰</div>
-        <div class="stat-value">{{ $totalPenjualan }}</div>
-        <div class="stat-label">Total Penjualan</div>
-    </div>
-
-    @if($stokRendah > 0)
-    <div class="stat-card red">
-        <div class="stat-icon">⚠️</div>
-        <div class="stat-value">{{ $stokRendah }}</div>
-        <div class="stat-label">Stok Hampir Habis</div>
-    </div>
-    @endif
-</div>
 
 {{-- ══════ NILAI RINGKAS ══════ --}}
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:26px;">
@@ -77,6 +65,49 @@
             </div>
         </div>
     </div>
+</div>
+
+
+{{-- ══════ STAT CARDS ══════ --}}
+<div class="badge-container">
+
+    <div class="stat-badge badge badge-warning">
+        <i class="fa-solid fa-box"></i>
+        {{ $totalBahanMentah }} Bahan Mentah
+    </div>
+
+    <div class="stat-badge badge badge-success">
+        <i class="fa-solid fa-box-open"></i>
+        {{ $totalProdukJadi }} Produk Jadi
+    </div>
+
+    <div class="stat-badge badge badge-info">
+        <i class="fa-solid fa-handshake"></i>
+        {{ $totalSupplier }} Supplier
+    </div>
+
+    <div class="stat-badge badge badge-warning">
+        <i class="fa-solid fa-cart-shopping"></i>
+        {{ $totalPembelian }} Pembelian
+    </div>
+
+    <div class="stat-badge badge badge-info">
+        <i class="fa-solid fa-industry"></i>
+        {{ $totalProduksi }} Produksi
+    </div>
+
+    <div class="stat-badge badge badge-success">
+        <i class="fa-solid fa-cash-register"></i>
+        {{ $totalPenjualan }} Penjualan
+    </div>
+
+    @if($stokRendah > 0)
+    <div class="stat-badge badge badge-danger">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{ $stokRendah }} Stok Hampir Habis
+    </div>
+    @endif
+
 </div>
 
 {{-- ══════ BOTTOM ROW: Tables ══════ --}}

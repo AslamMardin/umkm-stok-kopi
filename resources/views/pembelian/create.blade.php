@@ -93,7 +93,7 @@
                 </div>
 
                 <div style="display:flex;gap:10px;">
-                    <button type="submit" class="btn btn-primary">🛒 Simpan Pembelian</button>
+                    <button type="submit" class="btn btn-primary">Simpan Pembelian</button>
                     <a href="{{ route('pembelian.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

@@ -16,7 +16,7 @@
                 <label class="form-label" style="margin-bottom:5px;">Sampai</label>
                 <input type="date" name="to" value="{{ request('to') }}" class="form-control">
             </div>
-            <button type="submit" class="btn btn-secondary">🔍 Filter</button>
+            <button type="submit" class="btn btn-secondary"> <i class="fa-solid fa-filter"></i> Cari</button>
             @if(request()->hasAny(['from','to']))
                 <a href="{{ route('penjualan.index') }}" class="btn btn-secondary">✕ Reset</a>
             @endif

@@ -88,7 +88,7 @@
                 </div>
 
                 <div style="display:flex;gap:10px;">
-                    <button type="submit" class="btn btn-primary">💰 Simpan Penjualan</button>
+                    <button type="submit" class="btn btn-primary">Simpan Penjualan</button>
                     <a href="{{ route('penjualan.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
