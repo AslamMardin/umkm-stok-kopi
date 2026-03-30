@@ -1,143 +1,163 @@
-{{-- FILE: resources/views/produksi/create.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Catat Produksi')
+@section('page-title', 'Catat Batch Produksi')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold mb-0"><i class="bi bi-plus-circle me-2"></i>Catat Produksi Baru</h4>
-    <a href="{{ route('produksi.index') }}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i> Kembali
-    </a>
-</div>
-
-<form action="{{ route('produksi.store') }}" method="POST">
-    @csrf
-    <div class="row g-3">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">Informasi Produksi</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Produksi <span class="text-danger">*</span></label>
-                        <input type="date" name="tanggal_produksi" class="form-control"
-                               value="{{ old('tanggal_produksi', date('Y-m-d')) }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Jenis Proses <span class="text-danger">*</span></label>
-                        <select name="jenis_proses" class="form-select" required>
-                            <option value="roasting" {{ old('jenis_proses') == 'roasting' ? 'selected' : '' }}>Roasting</option>
-                            <option value="packing" {{ old('jenis_proses') == 'packing' ? 'selected' : '' }}>Packing</option>
-                            <option value="roasting_packing" {{ old('jenis_proses') == 'roasting_packing' ? 'selected' : '' }}>Roasting + Packing</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Catatan</label>
-                        <textarea name="catatan" class="form-control" rows="3" placeholder="Suhu roasting, kelembaban, dll">{{ old('catatan') }}</textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-save me-2"></i>Simpan & Mulai Produksi
-                    </button>
-                </div>
-            </div>
-
-            <div class="alert alert-info mt-3 small">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <strong>Cara kerja integrasi stok:</strong><br>
-                Setelah produksi <strong>diselesaikan</strong>, sistem akan otomatis:
-                <ul class="mb-0 mt-1">
-                    <li>Mengurangi stok bahan baku sesuai pemakaian</li>
-                    <li>Menambah stok produk jadi sesuai hasil produksi</li>
-                </ul>
-            </div>
+<div style="max-width:700px;">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">⚙️ Form Produksi Baru</div>
+            <a href="{{ route('produksi.index') }}" class="btn btn-secondary btn-sm">← Kembali</a>
         </div>
+        <div class="card-body">
 
-        <div class="col-md-7">
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold d-flex justify-content-between align-items-center">
-                    <span>Detail Bahan Baku & Hasil Produksi</span>
-                    <button type="button" class="btn btn-success btn-sm" id="btn-tambah-detail">
-                        <i class="bi bi-plus-lg"></i> Tambah Baris
-                    </button>
+            {{-- Alur visual --}}
+            <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;padding:14px;background:var(--cream);border-radius:8px;">
+                <div style="text-align:center;">
+                    <div style="font-size:28px;">🌱</div>
+                    <div style="font-size:11px;color:var(--caramel);margin-top:4px;">Bahan Mentah</div>
+                    <div style="font-size:11px;color:var(--danger);font-weight:600;">Stok Berkurang</div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Bahan Baku Digunakan</th>
-                                    <th>Jumlah (kg)</th>
-                                    <th>Produk Dihasilkan</th>
-                                    <th>Jumlah (pcs)</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="detail-rows">
-                                <tr class="detail-row">
-                                    <td>
-                                        <select name="detail[0][bahan_baku_id]" class="form-select form-select-sm">
-                                            <option value="">-- (kosongkan jika tidak ada) --</option>
-                                            @foreach($bahanBakus as $bb)
-                                                <option value="{{ $bb->id }}">
-                                                    {{ $bb->nama_bahan }} ({{ number_format($bb->stok, 1) }} {{ $bb->satuan }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="detail[0][jumlah_bahan_digunakan]"
-                                               class="form-control form-control-sm" step="0.01" min="0" placeholder="0.00">
-                                    </td>
-                                    <td>
-                                        <select name="detail[0][produk_id]" class="form-select form-select-sm">
-                                            <option value="">-- (kosongkan jika tidak ada) --</option>
-                                            @foreach($produkList as $pk)
-                                                <option value="{{ $pk->id }}">{{ $pk->nama_produk }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="detail[0][jumlah_produk_dihasilkan]"
-                                               class="form-control form-control-sm" min="0" placeholder="0">
-                                    </td>
-                                    <td class="text-center">-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div style="font-size:28px;color:var(--caramel);">⟹</div>
+                <div style="text-align:center;font-size:28px;">⚙️</div>
+                <div style="font-size:28px;color:var(--caramel);">⟹</div>
+                <div style="text-align:center;">
+                    <div style="font-size:28px;">📦</div>
+                    <div style="font-size:11px;color:var(--caramel);margin-top:4px;">Produk Jadi</div>
+                    <div style="font-size:11px;color:var(--success);font-weight:600;">Stok Bertambah</div>
                 </div>
             </div>
+
+            <form action="{{ route('produksi.store') }}" method="POST">
+                @csrf
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    {{-- Bahan Mentah --}}
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">🌱 Bahan Mentah (Input) <span class="required">*</span></label>
+                            <select name="barang_bahan_mentah_id" id="bahan_mentah_select"
+                                    class="form-control {{ $errors->has('barang_bahan_mentah_id') ? 'is-invalid' : '' }}"
+                                    onchange="updateBahanInfo(this)">
+                                <option value="">-- Pilih Bahan Mentah --</option>
+                                @foreach($bahanMentahs as $b)
+                                    <option value="{{ $b->id }}"
+                                            data-satuan="{{ $b->satuan }}"
+                                            data-stok="{{ $b->stock }}"
+                                            {{ old('barang_bahan_mentah_id') == $b->id ? 'selected' : '' }}>
+                                        {{ $b->name }} ({{ $b->stock }} {{ $b->satuan }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('barang_bahan_mentah_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Qty Bahan Digunakan <span class="required">*</span></label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="number" name="qty_bahan_mentah" id="qty_bahan"
+                                       value="{{ old('qty_bahan_mentah') }}" min="1"
+                                       class="form-control {{ $errors->has('qty_bahan_mentah') ? 'is-invalid' : '' }}"
+                                       placeholder="0">
+                                <span id="satuan-bahan" style="color:var(--caramel);font-size:13px;white-space:nowrap;">satuan</span>
+                            </div>
+                            @error('qty_bahan_mentah')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="stok-info" class="form-hint" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    {{-- Produk Jadi --}}
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">📦 Produk Jadi (Output) <span class="required">*</span></label>
+                            <select name="barang_produk_jadi_id"
+                                    class="form-control {{ $errors->has('barang_produk_jadi_id') ? 'is-invalid' : '' }}"
+                                    onchange="updateProdukInfo(this)">
+                                <option value="">-- Pilih Produk Jadi --</option>
+                                @foreach($produkJadis as $b)
+                                    <option value="{{ $b->id }}"
+                                            data-satuan="{{ $b->satuan }}"
+                                            {{ old('barang_produk_jadi_id') == $b->id ? 'selected' : '' }}>
+                                        {{ $b->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('barang_produk_jadi_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Qty Produk Dihasilkan <span class="required">*</span></label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="number" name="qty_produk_jadi" id="qty_produk"
+                                       value="{{ old('qty_produk_jadi') }}" min="1"
+                                       class="form-control {{ $errors->has('qty_produk_jadi') ? 'is-invalid' : '' }}"
+                                       placeholder="0">
+                                <span id="satuan-produk" style="color:var(--success);font-size:13px;white-space:nowrap;">satuan</span>
+                            </div>
+                            @error('qty_produk_jadi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tanggal Produksi <span class="required">*</span></label>
+                    <input type="date" name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}"
+                           class="form-control {{ $errors->has('tanggal') ? 'is-invalid' : '' }}">
+                    @error('tanggal') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" rows="2" class="form-control"
+                              placeholder="Catatan batch produksi (opsional)">{{ old('keterangan') }}</textarea>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                    <button type="submit" class="btn btn-primary">⚙️ Proses Produksi</button>
+                    <a href="{{ route('produksi.index') }}" class="btn btn-secondary">Batal</a>
+                </div>
+            </form>
         </div>
     </div>
-</form>
-@endsection
+</div>
 
 @push('scripts')
 <script>
-let detailIdx = 1;
+    function updateBahanInfo(select) {
+        const opt   = select.options[select.selectedIndex];
+        const satuan = opt.dataset.satuan || 'satuan';
+        const stok   = opt.dataset.stok   || 0;
+        document.getElementById('satuan-bahan').textContent = satuan;
 
-const bahanOptions = `<option value="">-- (kosongkan jika tidak ada) --</option>` +
-    `{!! collect($bahanBakus)->map(fn($bb) =>
-        "<option value='{$bb->id}'>{$bb->nama_bahan} (" . number_format($bb->stok, 1) . " {$bb->satuan})</option>"
-    )->implode('') !!}`;
+        const info = document.getElementById('stok-info');
+        if (select.value) {
+            info.style.display = 'block';
+            info.textContent   = `Stok tersedia: ${parseInt(stok).toLocaleString('id-ID')} ${satuan}`;
+            info.style.color   = stok <= 10 ? 'var(--danger)' : 'var(--caramel)';
+        } else {
+            info.style.display = 'none';
+        }
+    }
 
-const produkOptions = `<option value="">-- (kosongkan jika tidak ada) --</option>` +
-    `{!! collect($produkList)->map(fn($pk) =>
-        "<option value='{$pk->id}'>{$pk->nama_produk}</option>"
-    )->implode('') !!}`;
+    function updateProdukInfo(select) {
+        const opt = select.options[select.selectedIndex];
+        document.getElementById('satuan-produk').textContent = opt.dataset.satuan || 'satuan';
+    }
 
-document.getElementById('btn-tambah-detail').addEventListener('click', function () {
-    const tbody = document.getElementById('detail-rows');
-    const row = document.createElement('tr');
-    row.className = 'detail-row';
-    row.innerHTML = `
-        <td><select name="detail[${detailIdx}][bahan_baku_id]" class="form-select form-select-sm">${bahanOptions}</select></td>
-        <td><input type="number" name="detail[${detailIdx}][jumlah_bahan_digunakan]" class="form-control form-control-sm" step="0.01" min="0" placeholder="0.00"></td>
-        <td><select name="detail[${detailIdx}][produk_id]" class="form-select form-select-sm">${produkOptions}</select></td>
-        <td><input type="number" name="detail[${detailIdx}][jumlah_produk_dihasilkan]" class="form-control form-control-sm" min="0" placeholder="0"></td>
-        <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
-    `;
-    tbody.appendChild(row);
-    detailIdx++;
-});
+    document.addEventListener('DOMContentLoaded', function () {
+        const bahanSel   = document.getElementById('bahan_mentah_select');
+        const produkSels = document.querySelectorAll('[name="barang_produk_jadi_id"]');
+        if (bahanSel.value)   updateBahanInfo(bahanSel);
+        produkSels.forEach(s => { if (s.value) updateProdukInfo(s); });
+    });
 </script>
 @endpush
+@endsection

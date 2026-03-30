@@ -1,0 +1,104 @@
+Contoh Skenario Penggunaan Sistem
+1. 🏪 Tambah Supplier
+
+Data yang diinput:
+
+Nama: CV Kopi Mandar
+No HP: 08123456789
+Email : "kosongkan saja"
+Alamat: Polewali Mandar
+
+👉 Hasil:
+Supplier CV Kopi Mandar tersimpan di sistem
+Bisa dipilih saat pembelian
+
+
+
+==========================
+2. 📦 Tambah Barang
+🔹 Barang 1 (Bahan Mentah)
+Nama: Biji Kopi Mentah
+Tipe: Mentah
+Stok awal: 0
+satuan : kg atau gram (tapi pilih aja kg)
+
+🔹 Barang 2 (Produk Jadi)
+Nama: Kopi Bubuk Biasa 250gr
+Tipe: Produk Jadi
+Stok awal: 0
+Satuan : pcs atau liter (tapi pilih aja pcs)
+
+👉 Hasil:
+
+Sistem punya 2 kategori barang:
+bahan mentah
+produk jadi
+
+===============================
+3. 🟫 Pembelian (Barang Masuk)
+
+UMKM beli bahan mentah dari supplier
+
+Input:
+
+Supplier: CV Kopi Mandar
+Barang: Biji Kopi Mentah
+Jumlah (Qty): 100 kg
+Harga: 50000
+keterangan : beli kopi mentah
+
+👉 Proses sistem:
+
+Stok bahan mentah bertambah
+
+👉 Hasil:
+
+Stok Biji Kopi Mentah = 100 kg
+
+====================================
+4. ⚙️ Produksi (PROSES INTI)
+
+Mengolah bahan mentah jadi produk
+
+Input:
+
+Bahan mentah: Biji Kopi Mentah
+produk jadi : kopi bubuk biasa
+Jumlah dipakai: 10 kg
+Hasil produksi: 40 pcs Kopi Bubuk 250gr
+keterangan : memproduksi kopi bubuk biasa
+
+👉 Proses sistem:
+
+Stok mentah dikurangi:
+100 kg → 90 kg
+Stok produk jadi bertambah:
+0 → 40 pcs
+
+👉 Hasil:
+
+Biji kopi mentah habis
+Produk jadi tersedia
+
+====================================
+
+
+5. 🛒 Penjualan
+
+Menjual produk ke pelanggan
+
+Input:
+
+Barang: Kopi Bubuk 250gr
+Jumlah: 5 pcs
+Harga jual: 15.000/pcs
+
+👉 Proses sistem:
+
+Stok produk jadi berkurang
+
+👉 Hasil:
+
+Stok Kopi Bubuk:
+40 → 35 pcs
+

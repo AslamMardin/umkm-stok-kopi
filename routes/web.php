@@ -1,89 +1,72 @@
 <?php
-// =============================================================
-// FILE: routes/web.php
-// =============================================================
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PembelianBahanBakuController;
-use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProduksiController;
-use App\Http\Controllers\StokController;
+use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| SCM UMKM Kopi Polewali Mandar - Web Routes
-|--------------------------------------------------------------------------
-*/
+// ════════════════════════════════════════════════════════
+//  ROUTE PUBLIK — dapat diakses tanpa login
+// ════════════════════════════════════════════════════════
 
-
-
-
-Route::get('/', fn() => redirect()->route('dashboard'));
-
-// Login
-
-Route::middleware('guest')->group(function () {
-    Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+// Redirect root ke login atau dashboard (tergantung status auth)
+Route::get('/', function () {
+    return redirect()->route(auth()->check() ? 'dashboard' : 'login');
 });
 
-Route::middleware(['auth'])->group(function () {
+// Autentikasi
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/login',  'showLoginForm')->name('login');
+    Route::post('/login', 'login')->name('login.post');
+});
 
-    // Dashboard
+// ════════════════════════════════════════════════════════
+//  ROUTE TERPROTEKSI — hanya bisa diakses setelah login
+//  Menggunakan middleware 'auth' bawaan Laravel
+// ════════════════════════════════════════════════════════
+
+Route::middleware('auth')->group(function () {
+
+    // ── Logout ────────────────────────────────────────────
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // ── Dashboard ─────────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // -------------------------------------------------------
-    // Pembelian Bahan Baku
-    // -------------------------------------------------------
-    Route::prefix('pembelian')->name('pembelian.')->group(function () {
-        Route::get('/',           [PembelianBahanBakuController::class, 'index'])   ->name('index');
-        Route::get('/create',     [PembelianBahanBakuController::class, 'create'])  ->name('create');
-        Route::post('/',          [PembelianBahanBakuController::class, 'store'])   ->name('store');
-        Route::get('/{pembelian}',[PembelianBahanBakuController::class, 'show'])    ->name('show');
+    // ── Barang (CRUD lengkap) ──────────────────────────────
+    Route::resource('barang', BarangController::class);
 
-        // Aksi yang mempengaruhi stok
-        Route::post('/{pembelian}/terima',   [PembelianBahanBakuController::class, 'terima'])  ->name('terima');
-        Route::post('/{pembelian}/batalkan', [PembelianBahanBakuController::class, 'batalkan'])->name('batalkan');
+    // ── Supplier (CRUD lengkap) ────────────────────────────
+    Route::resource('supplier', SupplierController::class);
+
+    // ── Pembelian ──────────────────────────────────────────
+    // GET    /pembelian          → index
+    // GET    /pembelian/create   → create
+    // POST   /pembelian          → store
+    // GET    /pembelian/{id}     → show
+    // DELETE /pembelian/{id}     → destroy
+    Route::resource('pembelian', PembelianController::class)
+         ->except(['edit', 'update']); // Pembelian tidak bisa diedit, hanya dihapus + buat baru
+
+    // ── Produksi ───────────────────────────────────────────
+    Route::resource('produksi', ProduksiController::class)
+         ->only(['index', 'create', 'store', 'show']); // Produksi hanya bisa ditambah & dilihat
+
+    // ── Penjualan ──────────────────────────────────────────
+    Route::resource('penjualan', PenjualanController::class)
+         ->except(['edit', 'update']);
+
+    // ── Laporan ───────────────────────────────────────────
+    Route::prefix('laporan')->name('laporan.')->controller(LaporanController::class)->group(function () {
+        Route::get('/',         'index')->name('index');
+        Route::get('/stok',     'stok')->name('stok');
+        Route::get('/pembelian','pembelian')->name('pembelian');
+        Route::get('/penjualan','penjualan')->name('penjualan');
+        Route::get('/produksi', 'produksi')->name('produksi');
     });
-
-    // -------------------------------------------------------
-    // Produksi (Roasting & Packing)
-    // -------------------------------------------------------
-    Route::prefix('produksi')->name('produksi.')->group(function () {
-        Route::get('/',             [ProduksiController::class, 'index'])     ->name('index');
-        Route::get('/create',       [ProduksiController::class, 'create'])    ->name('create');
-        Route::post('/',            [ProduksiController::class, 'store'])     ->name('store');
-        Route::get('/{produksi}',   [ProduksiController::class, 'show'])      ->name('show');
-
-        // Selesaikan produksi → update stok otomatis
-        Route::post('/{produksi}/selesaikan', [ProduksiController::class, 'selesaikan'])->name('selesaikan');
-    });
-
-    // -------------------------------------------------------
-    // Penjualan Produk
-    // -------------------------------------------------------
-    Route::prefix('penjualan')->name('penjualan.')->group(function () {
-        Route::get('/',              [PenjualanController::class, 'index'])     ->name('index');
-        Route::get('/create',        [PenjualanController::class, 'create'])    ->name('create');
-        Route::post('/',             [PenjualanController::class, 'store'])     ->name('store');
-        Route::get('/{penjualan}',   [PenjualanController::class, 'show'])      ->name('show');
-
-        // Konfirmasi & batalkan penjualan → update stok otomatis
-        Route::post('/{penjualan}/konfirmasi', [PenjualanController::class, 'konfirmasi'])->name('konfirmasi');
-        Route::post('/{penjualan}/batalkan',   [PenjualanController::class, 'batalkan'])  ->name('batalkan');
-    });
-
-    // -------------------------------------------------------
-    // Manajemen Stok (read-only monitoring)
-    // -------------------------------------------------------
-    Route::prefix('stok')->name('stok.')->group(function () {
-        Route::get('/', [StokController::class, 'index'])->name('index');
-        Route::get('/bahan-baku/{bahanBaku}', [StokController::class, 'bahanBaku'])->name('bahan-baku');
-        Route::get('/produk/{produkKopi}',    [StokController::class, 'produkKopi'])->name('produk');
-    });
-
-     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-

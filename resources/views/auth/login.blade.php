@@ -3,156 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — SCM Kopi Polewali Mandar</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Login — SCM Kopi UMKM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400i&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --espresso: #1C120A;
+            --roast:    #3B2314;
+            --caramel:  #8B5E3C;
+            --latte:    #C49A6C;
+            --cream:    #F5ECD7;
+            --milk:     #FBF7F0;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--roast);
             min-height: 100vh;
-            background: linear-gradient(135deg, #3d1a00 0%, #7b3f00 50%, #c47e2b 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            /* Rich coffee texture via CSS gradient */
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(139,94,60,.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(28,18,10,.6) 0%, transparent 50%);
+            padding: 20px;
         }
-        .login-card {
+
+        .login-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 860px;
             width: 100%;
-            max-width: 420px;
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,.5);
         }
-        .login-header {
-            background: #3d1a00;
-            border-radius: 16px 16px 0 0;
-            padding: 2rem;
-            text-align: center;
+
+        /* Left panel — decorative */
+        .login-left {
+            background: var(--espresso);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
-        .login-body {
-            padding: 2rem;
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,94,60,.35) 0%, transparent 70%);
+            top: -80px; right: -80px;
         }
-        .form-control:focus {
-            border-color: #7b3f00;
-            box-shadow: 0 0 0 0.2rem rgba(61,26,0,0.2);
+
+        .login-left::after {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(196,154,108,.2) 0%, transparent 70%);
+            bottom: -50px; left: -50px;
         }
-        .btn-login {
-            background: #3d1a00;
-            border-color: #3d1a00;
-            color: #fff;
+
+        .brand-block { position: relative; z-index: 1; }
+
+        .brand-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .brand-name {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--cream);
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .brand-tagline {
+            font-size: 14px;
+            color: var(--latte);
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(245,236,215,.65);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .feature-item::before {
+            content: '✓';
+            width: 20px; height: 20px;
+            background: rgba(139,94,60,.4);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px;
+            color: var(--latte);
+            flex-shrink: 0;
+        }
+
+        .login-year {
+            font-size: 11px;
+            color: rgba(196,154,108,.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Right panel — form */
+        .login-right {
+            background: var(--milk);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-title {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--roast);
+            margin-bottom: 6px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: var(--caramel);
+            margin-bottom: 32px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
             font-weight: 600;
-            padding: 0.65rem;
+            color: var(--roast);
+            margin-bottom: 7px;
         }
-        .btn-login:hover {
-            background: #5c3017;
-            border-color: #5c3017;
-            color: #fff;
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid rgba(59,35,20,.2);
+            border-radius: 9px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--espresso);
+            background: white;
+            transition: border-color .2s, box-shadow .2s;
         }
-        .input-group-text {
-            background: #f8f5f0;
-            border-color: #dee2e6;
-            color: #7b3f00;
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--caramel);
+            box-shadow: 0 0 0 3px rgba(139,94,60,.13);
+        }
+
+        .form-control.is-invalid { border-color: #B23B3B; }
+
+        .invalid-feedback {
+            color: #B23B3B;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: var(--caramel);
+            cursor: pointer;
+        }
+
+        .checkbox-row label {
+            font-size: 13px;
+            color: var(--caramel);
+            cursor: pointer;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--roast);
+            color: var(--cream);
+            border: none;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background .2s, transform .1s;
+        }
+
+        .btn-login:hover   { background: var(--espresso); }
+        .btn-login:active  { transform: scale(.98); }
+
+        .alert-danger {
+            background: #fbeaea;
+            border: 1px solid #e8b0b0;
+            border-left: 4px solid #B23B3B;
+            border-radius: 8px;
+            padding: 11px 14px;
+            color: #832c2c;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .login-wrap { grid-template-columns: 1fr; }
+            .login-left { display: none; }
+            .login-right { padding: 36px 28px; }
         }
     </style>
 </head>
 <body>
-    <div class="login-card card">
-        {{-- Header --}}
-        <div class="login-header">
-            <div style="font-size: 3rem;">☕</div>
-            <h4 class="text-white fw-bold mb-1 mt-2">SCM Kopi PWM</h4>
-            <p class="mb-0" style="color:#d4a97a; font-size:0.85rem;">
-                Sistem Informasi Supply Chain<br>UMKM Kopi Polewali Mandar
-            </p>
+    <div class="login-wrap">
+
+        {{-- ── Left: Branding ── --}}
+        <div class="login-left">
+            <div class="brand-block">
+                <span class="brand-icon">☕</span>
+                <div class="brand-name">SCM Kopi<br>UMKM</div>
+                <p class="brand-tagline">
+                    Sistem informasi manajemen rantai pasok untuk usaha kopi Anda — dari biji mentah hingga cangkir pelanggan.
+                </p>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">Kelola stok bahan mentah & produk jadi</div>
+                <div class="feature-item">Catat pembelian dari supplier</div>
+                <div class="feature-item">Monitor proses produksi</div>
+                <div class="feature-item">Lacak penjualan & pendapatan</div>
+                <div class="feature-item">Laporan ringkasan SCM</div>
+            </div>
+
+            <div class="login-year">© {{ date('Y') }} SCM Kopi UMKM</div>
         </div>
 
-        {{-- Body --}}
-        <div class="login-body">
-            <h6 class="fw-bold text-center mb-4" style="color:#3d1a00;">Masuk ke Sistem</h6>
+        {{-- ── Right: Form ── --}}
+        <div class="login-right">
+            <div class="login-title">Selamat Datang</div>
+            <div class="login-subtitle">Masuk ke panel manajemen SCM Anda</div>
 
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show py-2" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            {{-- Error Alert --}}
+            @if($errors->any())
+                <div class="alert-danger">
+                    {{ $errors->first() }}
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login.post') }}">
+            {{-- Info Alert (setelah logout) --}}
+            @if(session('info'))
+                <div style="background:#e8f0fb;border:1px solid #b3c8ec;border-left:4px solid #2E6DA4;border-radius:8px;padding:11px 14px;color:#1e4d7b;font-size:13px;margin-bottom:20px;">
+                    {{ session('info') }}
+                </div>
+            @endif
+
+            <form action="{{ route('login.post') }}" method="POST" novalidate>
                 @csrf
 
                 {{-- Email --}}
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold small">Email</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="form-control @error('email') is-invalid @enderror"
-                            value="{{ old('email') }}"
-                            placeholder="admin@kopi.com"
-                            required
-                            autofocus
-                        >
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="admin@kopi.com"
+                        class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                        autocomplete="email"
+                        autofocus
+                    >
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 {{-- Password --}}
-                <div class="mb-4">
-                    <label for="password" class="form-label fw-semibold small">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-control @error('password') is-invalid @enderror"
-                            placeholder="••••••••"
-                            required
-                        >
-                        <button class="btn btn-outline-secondary" type="button" id="toggle-password" tabindex="-1">
-                            <i class="bi bi-eye" id="eye-icon"></i>
-                        </button>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="••••••••"
+                        class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
+                        autocomplete="current-password"
+                    >
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 {{-- Remember Me --}}
-                <div class="mb-4 form-check">
-                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                    <label class="form-check-label small" for="remember">Ingat saya</label>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Ingat saya</label>
                 </div>
 
-                <button type="submit" class="btn btn-login w-100">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
-                </button>
+                <button type="submit" class="btn-login">Masuk →</button>
             </form>
         </div>
-
-        <div class="card-footer text-center py-3" style="background:#f8f5f0; border-radius:0 0 16px 16px;">
-            <small class="text-muted">
-                &copy; {{ date('Y') }} SCM Kopi Polewali Mandar
-            </small>
-        </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('toggle-password').addEventListener('click', function () {
-            const pwd  = document.getElementById('password');
-            const icon = document.getElementById('eye-icon');
-            if (pwd.type === 'password') {
-                pwd.type  = 'text';
-                icon.className = 'bi bi-eye-slash';
-            } else {
-                pwd.type  = 'password';
-                icon.className = 'bi bi-eye';
-            }
-        });
-    </script>
 </body>
 </html>

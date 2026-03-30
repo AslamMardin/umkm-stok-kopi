@@ -1,194 +1,132 @@
-{{-- FILE: resources/views/penjualan/create.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Catat Penjualan')
+@section('page-title', 'Catat Penjualan Baru')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold mb-0"><i class="bi bi-bag-plus me-2"></i>Catat Penjualan Produk</h4>
-    <a href="{{ route('penjualan.index') }}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i> Kembali
-    </a>
-</div>
-
-<form action="{{ route('penjualan.store') }}" method="POST">
-    @csrf
-    <div class="row g-3">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">Informasi Penjualan</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Pelanggan <small class="text-muted">(opsional)</small></label>
-                        <select name="pelanggan_id" class="form-select">
-                            <option value="">-- Pelanggan Umum / Walk-in --</option>
-                            @foreach($pelanggans as $pl)
-                                <option value="{{ $pl->id }}" {{ old('pelanggan_id') == $pl->id ? 'selected' : '' }}>
-                                    {{ $pl->nama_pelanggan }} ({{ ucfirst($pl->jenis_pelanggan) }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Penjualan <span class="text-danger">*</span></label>
-                        <input type="date" name="tanggal_jual" class="form-control"
-                               value="{{ old('tanggal_jual', date('Y-m-d')) }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
-                        <select name="metode_bayar" class="form-select" required>
-                            <option value="tunai">Tunai</option>
-                            <option value="transfer">Transfer Bank</option>
-                            <option value="cod">COD</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Diskon Global (Rp)</label>
-                        <input type="number" name="diskon" id="diskon-global" class="form-control"
-                               min="0" step="1000" value="{{ old('diskon', 0) }}" placeholder="0">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Catatan</label>
-                        <textarea name="catatan" class="form-control" rows="2">{{ old('catatan') }}</textarea>
-                    </div>
-                </div>
-            </div>
+<div style="max-width:620px;">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Form Penjualan Produk</div>
+            <a href="{{ route('penjualan.index') }}" class="btn btn-secondary btn-sm">← Kembali</a>
         </div>
+        <div class="card-body">
+            @if($barangs->isEmpty())
+                <div class="alert alert-warning">
+                    ⚠️ Tidak ada produk jadi yang tersedia. Lakukan proses
+                    <a href="{{ route('produksi.create') }}" style="color:var(--caramel);">produksi</a> terlebih dahulu.
+                </div>
+            @else
+            <form action="{{ route('penjualan.store') }}" method="POST">
+                @csrf
 
-        <div class="col-md-7">
-            <div class="card shadow-sm mb-3">
-                <div class="card-header fw-bold d-flex justify-content-between align-items-center">
-                    <span>Item Produk</span>
-                    <button type="button" class="btn btn-success btn-sm" id="btn-tambah-item">
-                        <i class="bi bi-plus-lg"></i> Tambah Item
-                    </button>
+                <div class="form-group">
+                    <label class="form-label">Produk Jadi <span class="required">*</span></label>
+                    <select name="barang_id" id="barang_select"
+                            class="form-control {{ $errors->has('barang_id') ? 'is-invalid' : '' }}"
+                            onchange="updateProdukInfo(this)">
+                        <option value="">-- Pilih Produk --</option>
+                        @foreach($barangs as $b)
+                            <option value="{{ $b->id }}"
+                                    data-satuan="{{ $b->satuan }}"
+                                    data-stok="{{ $b->stock }}"
+                                    {{ old('barang_id') == $b->id ? 'selected' : '' }}>
+                                {{ $b->name }} (Stok: {{ $b->stock }} {{ $b->satuan }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('barang_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width:35%">Produk</th>
-                                    <th style="width:15%">Qty</th>
-                                    <th style="width:25%">Harga Satuan</th>
-                                    <th style="width:20%">Subtotal</th>
-                                    <th style="width:5%"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="item-rows">
-                                <tr class="item-row">
-                                    <td>
-                                        <select name="items[0][produk_id]" class="form-select form-select-sm produk-select" required>
-                                            <option value="">-- Pilih Produk --</option>
-                                            @foreach($produkList as $pk)
-                                                <option value="{{ $pk->id }}" data-harga="{{ $pk->harga_jual }}" data-stok="{{ $pk->stok }}">
-                                                    {{ $pk->nama_produk }} (stok: {{ $pk->stok }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="items[0][jumlah]" class="form-control form-control-sm jumlah-input"
-                                               min="1" placeholder="0" required>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="items[0][harga_satuan]" class="form-control form-control-sm harga-input"
-                                               min="0" step="1000" placeholder="0" required>
-                                    </td>
-                                    <td class="subtotal-cell fw-semibold">Rp 0</td>
-                                    <td class="text-center">-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="text-muted">Total Harga</span>
-                        <span id="display-total-harga" class="fw-semibold">Rp 0</span>
+                <div class="form-group">
+                    <label class="form-label">Nama Pembeli</label>
+                    <input type="text" name="pembeli" value="{{ old('pembeli') }}"
+                           class="form-control" placeholder="Nama pelanggan (opsional)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tanggal Penjualan <span class="required">*</span></label>
+                    <input type="date" name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}"
+                           class="form-control {{ $errors->has('tanggal') ? 'is-invalid' : '' }}">
+                    @error('tanggal') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">Jumlah (Qty) <span class="required">*</span></label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="1"
+                                   class="form-control {{ $errors->has('qty') ? 'is-invalid' : '' }}"
+                                   placeholder="0" oninput="hitungTotal()">
+                            <span id="satuan-label" style="color:var(--caramel);font-size:13px;white-space:nowrap;">satuan</span>
+                        </div>
+                        @error('qty') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <div id="stok-info" class="form-hint" style="display:none;"></div>
                     </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="text-muted">Diskon</span>
-                        <span id="display-diskon" class="text-danger">- Rp 0</span>
-                    </div>
-                    <hr class="my-2">
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold fs-6">Total Bayar</span>
-                        <span id="display-total-bayar" class="fw-bold fs-5 text-success">Rp 0</span>
-                    </div>
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-success w-100">
-                            <i class="bi bi-save me-2"></i>Simpan Penjualan
-                        </button>
+
+                    <div class="form-group">
+                        <label class="form-label">Harga Satuan (Rp) <span class="required">*</span></label>
+                        <input type="number" name="harga_satuan" id="harga_satuan"
+                               value="{{ old('harga_satuan') }}" min="0" step="500"
+                               class="form-control {{ $errors->has('harga_satuan') ? 'is-invalid' : '' }}"
+                               placeholder="0" oninput="hitungTotal()">
+                        @error('harga_satuan') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
-            </div>
+
+                {{-- Total preview --}}
+                <div style="background:linear-gradient(135deg,#eaf4ec,#d8eddb);border-radius:8px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:13px;color:var(--success);font-weight:500;">Total Penjualan:</span>
+                    <span id="total-preview" style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--success);">
+                        Rp 0
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" rows="2" class="form-control"
+                              placeholder="Catatan tambahan (opsional)">{{ old('keterangan') }}</textarea>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                    <button type="submit" class="btn btn-primary">💰 Simpan Penjualan</button>
+                    <a href="{{ route('penjualan.index') }}" class="btn btn-secondary">Batal</a>
+                </div>
+            </form>
+            @endif
         </div>
     </div>
-</form>
-@endsection
+</div>
 
 @push('scripts')
 <script>
-let rowIndex = 1;
-const produkOptions = `<option value="">-- Pilih Produk --</option>` +
-    `{!! collect($produkList)->map(fn($pk) =>
-        "<option value='{$pk->id}' data-harga='{$pk->harga_jual}' data-stok='{$pk->stok}'>{$pk->nama_produk} (stok: {$pk->stok})</option>"
-    )->implode('') !!}`;
-
-document.getElementById('btn-tambah-item').addEventListener('click', function () {
-    const tbody = document.getElementById('item-rows');
-    const row = document.createElement('tr');
-    row.className = 'item-row';
-    row.innerHTML = `
-        <td><select name="items[${rowIndex}][produk_id]" class="form-select form-select-sm produk-select" required>${produkOptions}</select></td>
-        <td><input type="number" name="items[${rowIndex}][jumlah]" class="form-control form-control-sm jumlah-input" min="1" required></td>
-        <td><input type="number" name="items[${rowIndex}][harga_satuan]" class="form-control form-control-sm harga-input" min="0" step="1000" required></td>
-        <td class="subtotal-cell fw-semibold">Rp 0</td>
-        <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); hitungGrandTotal()"><i class="bi bi-trash"></i></button></td>
-    `;
-    tbody.appendChild(row);
-    rowIndex++;
-    attachEvents(row);
-});
-
-function attachEvents(row) {
-    row.querySelector('.produk-select').addEventListener('change', function () {
-        const opt = this.selectedOptions[0];
-        if (opt && opt.dataset.harga) {
-            row.querySelector('.harga-input').value = opt.dataset.harga;
+    function updateProdukInfo(select) {
+        const opt    = select.options[select.selectedIndex];
+        const satuan = opt.dataset.satuan || 'satuan';
+        const stok   = opt.dataset.stok   || 0;
+        document.getElementById('satuan-label').textContent = satuan;
+        const info = document.getElementById('stok-info');
+        if (select.value) {
+            info.style.display = 'block';
+            info.textContent   = `Stok tersedia: ${parseInt(stok).toLocaleString('id-ID')} ${satuan}`;
+            info.style.color   = stok <= 10 ? 'var(--danger)' : 'var(--caramel)';
+        } else {
+            info.style.display = 'none';
         }
-        hitungSubtotal(row);
+        hitungTotal();
+    }
+
+    function hitungTotal() {
+        const qty   = parseFloat(document.getElementById('qty').value)          || 0;
+        const harga = parseFloat(document.getElementById('harga_satuan').value) || 0;
+        document.getElementById('total-preview').textContent =
+            'Rp ' + (qty * harga).toLocaleString('id-ID');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const sel = document.getElementById('barang_select');
+        if (sel && sel.value) updateProdukInfo(sel);
+        hitungTotal();
     });
-    row.querySelector('.jumlah-input').addEventListener('input', () => hitungSubtotal(row));
-    row.querySelector('.harga-input').addEventListener('input', () => hitungSubtotal(row));
-}
-
-function hitungSubtotal(row) {
-    const jumlah = parseInt(row.querySelector('.jumlah-input').value) || 0;
-    const harga  = parseFloat(row.querySelector('.harga-input').value) || 0;
-    const sub    = jumlah * harga;
-    row.querySelector('.subtotal-cell').textContent = 'Rp ' + sub.toLocaleString('id-ID');
-    hitungGrandTotal();
-}
-
-function hitungGrandTotal() {
-    let total = 0;
-    document.querySelectorAll('.subtotal-cell').forEach(cell => {
-        const val = parseFloat(cell.textContent.replace('Rp ', '').replace(/\./g, '').replace(',', '.')) || 0;
-        total += val;
-    });
-    const diskon    = parseFloat(document.getElementById('diskon-global').value) || 0;
-    const totalBayar = total - diskon;
-
-    document.getElementById('display-total-harga').textContent = 'Rp ' + total.toLocaleString('id-ID');
-    document.getElementById('display-diskon').textContent      = '- Rp ' + diskon.toLocaleString('id-ID');
-    document.getElementById('display-total-bayar').textContent = 'Rp ' + totalBayar.toLocaleString('id-ID');
-}
-
-document.getElementById('diskon-global').addEventListener('input', hitungGrandTotal);
-document.querySelectorAll('.item-row').forEach(row => attachEvents(row));
 </script>
 @endpush
+@endsection

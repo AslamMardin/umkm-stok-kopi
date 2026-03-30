@@ -6,37 +6,49 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Model Supplier
- * Merepresentasikan pemasok bahan mentah.
+ * Model Pembelian
+ * Mencatat setiap transaksi pembelian bahan mentah dari supplier.
  */
-class Supplier extends Model
+class Pembelian extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'phone',
-        'address',
-        'email',
+        'supplier_id',
+        'barang_id',
+        'tanggal',
+        'qty',
+        'harga_satuan',
+        'keterangan',
     ];
 
-    // ──────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────
-
-    /** Semua transaksi pembelian dari supplier ini */
-    public function pembelians()
-    {
-        return $this->hasMany(Pembelian::class);
-    }
+    protected $casts = [
+        'tanggal'      => 'date',
+        'qty'          => 'integer',
+        'harga_satuan' => 'decimal:2',
+    ];
 
     // ──────────────────────────────────────────
     // Accessors
     // ──────────────────────────────────────────
 
-    /** Total nilai pembelian dari supplier ini */
-    public function getTotalPembelianAttribute(): float
+    /** Total harga = qty × harga_satuan */
+    public function getTotalHargaAttribute(): float
     {
-        return $this->pembelians()->sum(\DB::raw('qty * harga_satuan'));
+        return $this->qty * $this->harga_satuan;
+    }
+
+    // ──────────────────────────────────────────
+    // Relationships
+    // ──────────────────────────────────────────
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class);
     }
 }

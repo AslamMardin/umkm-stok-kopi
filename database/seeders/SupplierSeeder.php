@@ -3,42 +3,45 @@
 namespace Database\Seeders;
 
 use App\Models\Supplier;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * SupplierSeeder
+ * Data dummy pemasok bahan baku kopi UMKM.
+ */
 class SupplierSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $suppliers = [
             [
-                'nama_supplier' => 'Petani Kopi Pak Ahmad',
-                'alamat'        => 'Desa Campalagian, Polewali Mandar',
-                'no_telepon'    => '081234567890',
-                'email'         => 'pak.ahmad@gmail.com',
-                'keterangan'    => 'Supplier tetap Green Bean Arabika Toraja',
+                'name'    => 'PT. Kopi Polewali',
+                'phone'   => '08123456789',
+                'address' => 'Jl. Raya',
+                'email'   => 'kopi.nusantara@email.com',
             ],
             [
-                'nama_supplier' => 'Koperasi Tani Maju',
-                'alamat'        => 'Desa Balanipa, Polewali Mandar',
-                'no_telepon'    => '082345678901',
-                'email'         => 'koptani.maju@gmail.com',
-                'keterangan'    => 'Supplier Green Bean Robusta',
+                'name'    => 'PT. Kopi Mandar',
+                'phone'   => '08234567890',
+                'address' => 'Jl. Perkebunan',
+                'email'   => 'agro.kopi@email.com',
             ],
             [
-                'nama_supplier' => 'Petani Kopi Bu Sari',
-                'alamat'        => 'Desa Tinambung, Polewali Mandar',
-                'no_telepon'    => '083456789012',
-                'email'         => null,
-                'keterangan'    => 'Supplier musiman Green Bean campuran',
+                'name'    => 'PT. Kopi Campalagian',
+                'phone'   => '08345678901',
+                'address' => 'Jl. merpati',
+                'email'   => 'sejahtera.gula@email.com',
             ],
+           
         ];
 
         foreach ($suppliers as $supplier) {
-            Supplier::create($supplier);
+            Supplier::updateOrCreate(
+                ['name' => $supplier['name']],
+                $supplier
+            );
         }
+
+        $this->command->info('✅ SupplierSeeder: ' . count($suppliers) . ' supplier berhasil dibuat.');
     }
 }

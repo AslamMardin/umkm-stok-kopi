@@ -1,48 +1,71 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\BahanBaku;
-use App\Models\PembelianBahanBaku;
-use App\Models\Penjualan;
+use App\Models\Barang;
+use App\Models\Supplier;
+use App\Models\Pembelian;
 use App\Models\Produksi;
-use App\Models\ProdukKopi;
+use App\Models\Penjualan;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * DashboardController
+ * Menampilkan ringkasan statistik utama SCM ke halaman dashboard.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Kumpulkan semua data ringkasan dan kirim ke view dashboard.
+     */
     public function index()
     {
-        // Ringkasan stok
-        $totalBahanBaku      = BahanBaku::count();
-        $bahanBakuKritis     = BahanBaku::whereColumn('stok', '<=', 'stok_minimum')->count();
-        $totalProduk         = ProdukKopi::count();
-        $produkStokKritis    = ProdukKopi::whereColumn('stok', '<=', 'stok_minimum')->count();
+        // Statistik stok barang
+        $totalBahanMentah  = Barang::bahanMentah()->count();
+        $totalProdukJadi   = Barang::produkJadi()->count();
+        $stokRendah        = Barang::where('stock', '<=', 10)->count(); // threshold stok rendah
 
-        // Ringkasan transaksi bulan ini
-        $pembelianBulanIni   = PembelianBahanBaku::whereMonth('tanggal_beli', now()->month)
-                                ->whereYear('tanggal_beli', now()->year)
-                                ->where('status', 'diterima')
-                                ->sum('total_harga');
+        // Statistik transaksi
+        $totalSupplier     = Supplier::count();
+        $totalPembelian    = Pembelian::count();
+        $totalProduksi     = Produksi::count();
+        $totalPenjualan    = Penjualan::count();
 
-        $penjualanBulanIni   = Penjualan::whereMonth('tanggal_jual', now()->month)
-                                ->whereYear('tanggal_jual', now()->year)
-                                ->where('status', 'lunas')
-                                ->sum('total_bayar');
+        // Nilai keuangan ringkas
+        $totalNilaiPembelian = Pembelian::sum(DB::raw('qty * harga_satuan'));
+        $totalNilaiPenjualan = Penjualan::sum(DB::raw('qty * harga_satuan'));
 
-        $produksiAktif       = Produksi::where('status', 'proses')->count();
+        // 5 transaksi penjualan terbaru
+        $penjualanTerbaru = Penjualan::with('barang')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // Daftar bahan baku kritis
-        $bahanBakuKritisList = BahanBaku::whereColumn('stok', '<=', 'stok_minimum')->get();
-        $produkKritisList    = ProdukKopi::whereColumn('stok', '<=', 'stok_minimum')->get();
+        // 5 transaksi pembelian terbaru
+        $pembelianTerbaru = Pembelian::with(['supplier', 'barang'])
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // Transaksi terbaru
-        $pembelianTerbaru    = PembelianBahanBaku::with('supplier')->latest()->take(5)->get();
-        $penjualanTerbaru    = Penjualan::with('pelanggan')->latest()->take(5)->get();
+        // Barang dengan stok menipis (≤ 10)
+        $barangStokRendah = Barang::where('stock', '<=', 10)
+            ->orderBy('stock')
+            ->take(5)
+            ->get();
 
-        return view('dashboard.index', compact(
-            'totalBahanBaku', 'bahanBakuKritis', 'totalProduk', 'produkStokKritis',
-            'pembelianBulanIni', 'penjualanBulanIni', 'produksiAktif',
-            'bahanBakuKritisList', 'produkKritisList',
-            'pembelianTerbaru', 'penjualanTerbaru'
+        return view('dashboard', compact(
+            'totalBahanMentah',
+            'totalProdukJadi',
+            'stokRendah',
+            'totalSupplier',
+            'totalPembelian',
+            'totalProduksi',
+            'totalPenjualan',
+            'totalNilaiPembelian',
+            'totalNilaiPenjualan',
+            'penjualanTerbaru',
+            'pembelianTerbaru',
+            'barangStokRendah',
         ));
     }
 }

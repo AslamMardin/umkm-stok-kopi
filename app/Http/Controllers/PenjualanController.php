@@ -2,129 +2,105 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetailPenjualan;
-use App\Models\Pelanggan;
 use App\Models\Penjualan;
-use App\Models\ProdukKopi;
+use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * PenjualanController
+ * Mencatat penjualan produk jadi ke konsumen.
+ * Setiap penjualan mengurangi stok produk jadi.
+ */
 class PenjualanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $penjualans = Penjualan::with('pelanggan')
-            ->latest()
-            ->paginate(15);
+        $query = Penjualan::with('barang');
 
-        return view('penjualan.index', compact('penjualans'));
+        if ($request->filled('from')) {
+            $query->whereDate('tanggal', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('tanggal', '<=', $request->to);
+        }
+
+        $penjualans = $query->latest('tanggal')->paginate(10)->withQueryString();
+
+        // Summary statistik
+        $totalPendapatan = $query->sum(DB::raw('qty * harga_satuan'));
+
+        return view('penjualan.index', compact('penjualans', 'totalPendapatan'));
     }
 
     public function create()
     {
-        $pelanggans = Pelanggan::orderBy('nama_pelanggan')->get();
-        $produkList = ProdukKopi::where('stok', '>', 0)->orderBy('nama_produk')->get();
+        // Hanya produk jadi yang bisa dijual, dan hanya yang stoknya ada
+        $barangs = Barang::produkJadi()->where('stock', '>', 0)->orderBy('name')->get();
 
-        return view('penjualan.create', compact('pelanggans', 'produkList'));
+        return view('penjualan.create', compact('barangs'));
     }
 
+    /**
+     * Simpan penjualan baru & kurangi stok produk jadi.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'pelanggan_id'           => 'nullable|exists:pelanggans,id',
-            'tanggal_jual'           => 'required|date',
-            'metode_bayar'           => 'required|in:tunai,transfer,cod',
-            'diskon'                 => 'nullable|numeric|min:0',
-            'catatan'                => 'nullable|string',
-            'items'                  => 'required|array|min:1',
-            'items.*.produk_id'      => 'required|exists:produk_kopis,id',
-            'items.*.jumlah'         => 'required|integer|min:1',
-            'items.*.harga_satuan'   => 'required|numeric|min:0',
-            'items.*.diskon_item'    => 'nullable|numeric|min:0',
+        $validated = $request->validate([
+            'barang_id'    => ['required', 'exists:barangs,id'],
+            'tanggal'      => ['required', 'date'],
+            'qty'          => ['required', 'integer', 'min:1'],
+            'harga_satuan' => ['required', 'numeric', 'min:0'],
+            'pembeli'      => ['nullable', 'string', 'max:255'],
+            'keterangan'   => ['nullable', 'string', 'max:500'],
+        ], [
+            'barang_id.required'   => 'Barang wajib dipilih.',
+            'tanggal.required'     => 'Tanggal penjualan wajib diisi.',
+            'qty.required'         => 'Jumlah wajib diisi.',
+            'qty.min'              => 'Jumlah minimal 1.',
+            'harga_satuan.required'=> 'Harga satuan wajib diisi.',
         ]);
 
-        DB::transaction(function () use ($request) {
-            $noPenjualan = 'PJL-' . date('Ymd') . '-' . str_pad(
-                Penjualan::whereDate('created_at', today())->count() + 1,
-                4, '0', STR_PAD_LEFT
-            );
+        $barang = Barang::findOrFail($validated['barang_id']);
 
-            $penjualan = Penjualan::create([
-                'no_penjualan' => $noPenjualan,
-                'pelanggan_id' => $request->pelanggan_id,
-                'tanggal_jual' => $request->tanggal_jual,
-                'total_harga'  => 0,
-                'diskon'       => $request->diskon ?? 0,
-                'total_bayar'  => 0,
-                'metode_bayar' => $request->metode_bayar,
-                'status'       => 'pending',
-                'catatan'      => $request->catatan,
-                'user_id'      => auth()->id(),
-            ]);
+        // Validasi tipe barang
+        if ($barang->type !== 'produk_jadi') {
+            return back()->withErrors(['barang_id' => 'Hanya produk jadi yang dapat dijual.'])->withInput();
+        }
 
-            $totalHarga = 0;
-            foreach ($request->items as $item) {
-                $diskonItem = $item['diskon_item'] ?? 0;
-                $subtotal   = ($item['jumlah'] * $item['harga_satuan']) - $diskonItem;
+        // Validasi kecukupan stok
+        if ($barang->stock < $validated['qty']) {
+            return back()
+                ->withErrors([
+                    'qty' => "Stok tidak mencukupi. Stok saat ini: {$barang->stock} {$barang->satuan}.",
+                ])
+                ->withInput();
+        }
 
-                DetailPenjualan::create([
-                    'penjualan_id' => $penjualan->id,
-                    'produk_id'    => $item['produk_id'],
-                    'jumlah'       => $item['jumlah'],
-                    'harga_satuan' => $item['harga_satuan'],
-                    'diskon_item'  => $diskonItem,
-                    'subtotal'     => $subtotal,
-                ]);
-
-                $totalHarga += $subtotal;
-            }
-
-            $totalBayar = $totalHarga - ($request->diskon ?? 0);
-            $penjualan->update([
-                'total_harga' => $totalHarga,
-                'total_bayar' => $totalBayar,
-            ]);
+        DB::transaction(function () use ($validated, $barang) {
+            Penjualan::create($validated);
+            $barang->decrement('stock', $validated['qty']);
         });
 
         return redirect()->route('penjualan.index')
-            ->with('success', 'Data penjualan berhasil dicatat. Konfirmasi pembayaran untuk memperbarui stok.');
+            ->with('success', 'Penjualan berhasil dicatat. Stok telah dikurangi.');
     }
 
     public function show(Penjualan $penjualan)
     {
-        $penjualan->load('pelanggan', 'detailPenjualans.produkKopi', 'user');
+        $penjualan->load('barang');
         return view('penjualan.show', compact('penjualan'));
     }
 
-    /**
-     * Konfirmasi penjualan lunas → stok produk berkurang otomatis
-     */
-    public function konfirmasi(Penjualan $penjualan)
+    public function destroy(Penjualan $penjualan)
     {
-        if ($penjualan->status !== 'pending') {
-            return back()->with('error', 'Penjualan ini tidak dapat dikonfirmasi.');
-        }
+        DB::transaction(function () use ($penjualan) {
+            // Kembalikan stok
+            $penjualan->barang->increment('stock', $penjualan->qty);
+            $penjualan->delete();
+        });
 
-        try {
-            $penjualan->konfirmasiPenjualan();
-            return redirect()->route('penjualan.show', $penjualan)
-                ->with('success', 'Penjualan dikonfirmasi lunas. Stok produk telah diperbarui.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-    /**
-     * Batalkan penjualan → stok produk dikembalikan
-     */
-    public function batalkan(Penjualan $penjualan)
-    {
-        try {
-            $penjualan->batalkanPenjualan();
-            return redirect()->route('penjualan.index')
-                ->with('success', 'Penjualan dibatalkan. Stok produk telah dikembalikan.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        return redirect()->route('penjualan.index')
+            ->with('success', 'Penjualan berhasil dihapus dan stok telah dikembalikan.');
     }
 }

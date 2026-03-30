@@ -5,59 +5,57 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model Produksi
+ * Mencatat konversi bahan mentah menjadi produk jadi.
+ *
+ * Relasi kunci:
+ *   - barang_bahan_mentah_id → Barang (type: bahan_mentah) yang dikonsumsi
+ *   - barang_produk_jadi_id  → Barang (type: produk_jadi) yang dihasilkan
+ */
 class Produksi extends Model
 {
     use HasFactory;
 
-    protected $table = 'produksis';
-
     protected $fillable = [
-        'no_produksi',
-        'tanggal_produksi',
-        'jenis_proses',     // roasting, packing, roasting_packing
-        'status',           // proses, selesai, dibatalkan
-        'catatan',
-        'user_id',
+        'barang_bahan_mentah_id',
+        'barang_produk_jadi_id',
+        'tanggal',
+        'qty_bahan_mentah',
+        'qty_produk_jadi',
+        'keterangan',
     ];
 
     protected $casts = [
-        'tanggal_produksi' => 'date',
+        'tanggal'          => 'date',
+        'qty_bahan_mentah' => 'integer',
+        'qty_produk_jadi'  => 'integer',
     ];
 
-    public function user()
+    // ──────────────────────────────────────────
+    // Relationships
+    // ──────────────────────────────────────────
+
+    /** Bahan mentah yang dikonsumsi dalam proses ini */
+    public function bahanMentah()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
+        return $this->belongsTo(Barang::class, 'barang_bahan_mentah_id');
     }
 
-    public function detailProduksis()
+    /** Produk jadi yang dihasilkan dari proses ini */
+    public function produkJadi()
     {
-        return $this->hasMany(DetailProduksi::class, 'produksi_id');
+        return $this->belongsTo(Barang::class, 'barang_produk_jadi_id');
     }
 
-    /**
-     * Selesaikan produksi:
-     * 1. Kurangi stok bahan baku sesuai pemakaian
-     * 2. Tambah stok produk jadi sesuai hasil
-     */
-    public function selesaikanProduksi(): void
-    {
-        if ($this->status === 'selesai') {
-            throw new \Exception("Produksi ini sudah diselesaikan.");
-        }
+    // ──────────────────────────────────────────
+    // Accessors
+    // ──────────────────────────────────────────
 
-        \DB::transaction(function () {
-            foreach ($this->detailProduksis as $detail) {
-                // Kurangi bahan baku yang digunakan
-                if ($detail->bahan_baku_id && $detail->jumlah_bahan_digunakan > 0) {
-                    $detail->bahanBaku->kurangiStok($detail->jumlah_bahan_digunakan);
-                }
-                // Tambah produk jadi yang dihasilkan
-                if ($detail->produk_id && $detail->jumlah_produk_dihasilkan > 0) {
-                    $detail->produkKopi->tambahStok($detail->jumlah_produk_dihasilkan);
-                }
-            }
-            $this->status = 'selesai';
-            $this->save();
-        });
+    /** Rasio konversi: berapa unit produk jadi per 1 unit bahan mentah */
+    public function getRasioKonversiAttribute(): float
+    {
+        if ($this->qty_bahan_mentah === 0) return 0;
+        return round($this->qty_produk_jadi / $this->qty_bahan_mentah, 2);
     }
 }
