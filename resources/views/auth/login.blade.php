@@ -319,7 +319,6 @@
                 </div>
 
                 <button type="submit" class="btn-login">Masuk →</button>
-                <p>Project : Tuti</p>
             </form>
         </div>
     </div>
