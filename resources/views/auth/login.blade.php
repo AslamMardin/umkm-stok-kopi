@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — SCM Kopi UMKM</title>
+    <title>Login — Kopi Kurrak</title>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400i&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -246,7 +246,7 @@
         <div class="login-left">
             <div class="brand-block">
                 <span class="brand-icon">☕</span>
-                <div class="brand-name">SCM Kopi<br>UMKM</div>
+                <div class="brand-name">Kopi<br>Kurrak</div>
                 <p class="brand-tagline">
                     Sistem informasi pencatat manajemen rantai pasok untuk usaha kopi — dari biji mentah hingga penjualan.
                 </p>
@@ -259,7 +259,7 @@
         {{-- ── Right: Form ── --}}
         <div class="login-right">
             <div class="login-title">Selamat Datang</div>
-            <div class="login-subtitle">Masuk ke panel manajemen SCM Anda</div>
+            <div class="login-subtitle">Masuk ke panel manajemen Anda</div>
 
             {{-- Error Alert --}}
             @if($errors->any())

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — SCM Kopi UMKM</title>
+    <title>@yield('title', 'Dashboard') — Kopi Kurrak</title>
 
     {{-- Google Fonts: Fraunces (display) + DM Sans (body) --}}
     <link
@@ -21,11 +21,9 @@
 
     {{-- ══════ SIDEBAR ══════ --}}
     <aside class="sidebar" id="sidebar">
-        {{-- Brand --}}
         <div class="sidebar-brand">
             <div class="sidebar-brand-icon">☕</div>
-            <div class="sidebar-brand-title">Kopi Mapia</div>
-            <div class="sidebar-brand-sub">SCM UMKM</div>
+            <div class="sidebar-brand-title">Kopi Kurrak</div>
         </div>
 
         {{-- Navigation --}}
