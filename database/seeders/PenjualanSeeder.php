@@ -14,11 +14,12 @@ class PenjualanSeeder extends Seeder
 {
     public function run(): void
     {
-        $arabikaBubuk    = Barang::where('name', 'Kopi Arabika Bubuk 250gr')->first();
-        $robustaBubuk    = Barang::where('name', 'Kopi Robusta Bubuk 250gr')->first();
-        $kopiSusuSachet  = Barang::where('name', 'Kopi Susu Sachet 20gr')->first();
-        $cappucinoSachet = Barang::where('name', 'Cappuccino Sachet 20gr')->first();
-        $siropVanilla    = Barang::where('name', 'Sirop Kopi Vanilla 250ml')->first();
+        $arabikaBubuk    = Barang::where('name', 'Kopi Arabika Bubuk 250gr')->first() ?? Barang::create(['name' => 'Kopi Arabika Bubuk 250gr', 'type' => 'produk_jadi', 'stock' => 100, 'satuan' => 'pcs']);
+        $robustaBubuk    = Barang::where('name', 'Kopi Robusta Bubuk 250gr')->first() ?? Barang::create(['name' => 'Kopi Robusta Bubuk 250gr', 'type' => 'produk_jadi', 'stock' => 100, 'satuan' => 'pcs']);
+        $kopiSusuSachet  = Barang::where('name', 'Kopi Susu Sachet 20gr')->first() ?? Barang::create(['name' => 'Kopi Susu Sachet 20gr', 'type' => 'produk_jadi', 'stock' => 100, 'satuan' => 'pcs']);
+        $cappucinoSachet = Barang::where('name', 'Cappuccino Sachet 20gr')->first() ?? Barang::create(['name' => 'Cappuccino Sachet 20gr', 'type' => 'produk_jadi', 'stock' => 100, 'satuan' => 'pcs']);
+        $siropVanilla    = Barang::where('name', 'Sirop Kopi Vanilla 250ml')->first() ?? Barang::create(['name' => 'Sirop Kopi Vanilla 250ml', 'type' => 'produk_jadi', 'stock' => 100, 'satuan' => 'pcs']);
+
 
         $data = [
             // ── Penjualan lama ─────────────────────────────
@@ -81,14 +82,32 @@ class PenjualanSeeder extends Seeder
             ],
         ];
 
+        // Tambah 20 data penjualan dummy untuk keperluan test pagination
+        for ($i = 1; $i <= 20; $i++) {
+            $barangTerpilih = ($i % 2 === 0) ? $arabikaBubuk : $robustaBubuk;
+            if ($barangTerpilih) {
+                $data[] = [
+                    'barang_id'    => $barangTerpilih->id,
+                    'tanggal'      => now()->subDays($i + 1)->toDateString(),
+                    'qty'          => rand(1, 5),
+                    'harga_satuan' => $barangTerpilih->name === 'Kopi Arabika Bubuk 250gr' ? 55000 : 45000,
+                    'pembeli'      => 'Pelanggan Dummy #' . $i,
+                    'keterangan'   => 'Seeding otomatis untuk tes halaman #' . $i,
+                ];
+            }
+        }
+
         foreach ($data as $item) {
             $barang = Barang::find($item['barang_id']);
 
-            if ($barang && $barang->stock >= $item['qty']) {
+            if ($barang) {
+                // Pastikan stok cukup agar seeding berhasil
+                if ($barang->stock < $item['qty']) {
+                    $barang->increment('stock', $item['qty'] * 2);
+                }
+
                 Penjualan::create($item);
                 $barang->decrement('stock', $item['qty']);
-            } else {
-                $this->command->warn("⚠️  Stok {$barang?->name} tidak cukup untuk penjualan, dilewati.");
             }
         }
 

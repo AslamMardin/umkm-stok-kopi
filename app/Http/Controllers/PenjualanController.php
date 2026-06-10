@@ -25,12 +25,17 @@ class PenjualanController extends Controller
             $query->whereDate('tanggal', '<=', $request->to);
         }
 
+        // Hitung total keseluruhan dari query yang SAMA (tanpa efek paginate)
+        // clone() penting agar paginate() di bawah tidak mengkontaminasi query ini
+        $queryForTotal = clone $query;
+        $totalPendapatan = $queryForTotal->sum(DB::raw('qty * harga_satuan'));
+
         $penjualans = $query->latest('tanggal')->paginate(10)->withQueryString();
+        
+        // Total pendapatan khusus halaman ini (hanya item yang tampil di halaman aktif)
+        $totalPendapatanHalamanIni = $penjualans->sum('total_harga');
 
-        // Summary statistik
-        $totalPendapatan = $query->sum(DB::raw('qty * harga_satuan'));
-
-        return view('penjualan.index', compact('penjualans', 'totalPendapatan'));
+        return view('penjualan.index', compact('penjualans', 'totalPendapatan', 'totalPendapatanHalamanIni'));
     }
 
     public function create()

@@ -55,9 +55,37 @@
         .brand-block { position: relative; z-index: 1; }
 
         .brand-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
+            width: 72px;
+            height: auto;
             display: block;
+            margin: 0 auto 16px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(139,94,60,.25), inset 0 1px 2px rgba(255,255,255,.1);
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+
+        .brand-icon:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 32px rgba(139,94,60,.35), inset 0 1px 2px rgba(255,255,255,.1);
+        }
+
+        .brand-text {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--caramel);
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 12px;
         }
 
         .brand-name {
@@ -229,8 +257,12 @@
 
         {{-- ── Right: Form ── --}}
         <div class="login-right">
-            <div class="login-title">Selamat Datang</div>
-            <div class="login-subtitle">Masuk ke panel manajemen Anda</div>
+                <div class="title-row">
+                    <img src="{{ asset('assets/img/logo.png') }}" alt="Kopi Kurrak" class="brand-icon">
+                    <div class="brand-text">Kopi Kurrak</div>
+                    <div class="login-title">Selamat Datang</div>
+                    <div class="login-subtitle">Masuk ke panel manajemen Anda</div>
+                </div>
 
             {{-- Error Alert --}}
             @if($errors->any())

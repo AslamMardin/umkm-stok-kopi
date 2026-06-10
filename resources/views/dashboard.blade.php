@@ -1,42 +1,79 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
-@section('page-title', 'Dashboard')
-
-
-
-@push('styles')
+@section('page-title', 'Dashboard')@push('styles')
         <style>
         /* Container biar rapi */
 .badge-container {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Khusus untuk stat dashboard */
 .stat-badge {
-    font-size: 12px;
-    padding: 6px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    font-weight: 600;
+    line-height: 1;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-/* Icon spacing */
 .stat-badge i {
-    margin-right: 6px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
-/* Hover biar interaktif */
 .stat-badge:hover {
-    transform: translateY(-1px);
-    transition: 0.2s;
-    cursor: default;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(28, 18, 10, 0.08);
+}
+
+.stat-badge.stat-warning {
+    border-color: rgba(255, 173, 61, 0.3);
+    background: rgba(255, 173, 61, 0.12);
+    color: var(--warning);
+}
+.stat-badge.stat-warning:hover {
+    background: rgba(255, 173, 61, 0.2);
+}
+
+.stat-badge.stat-success {
+    border-color: rgba(58, 176, 118, 0.3);
+    background: rgba(58, 176, 118, 0.12);
+    color: var(--success);
+}
+.stat-badge.stat-success:hover {
+    background: rgba(58, 176, 118, 0.2);
+}
+
+.stat-badge.stat-info {
+    border-color: rgba(82, 150, 255, 0.3);
+    background: rgba(82, 150, 255, 0.12);
+    color: var(--info);
+}
+.stat-badge.stat-info:hover {
+    background: rgba(82, 150, 255, 0.2);
+}
+
+.stat-badge.stat-danger {
+    border-color: rgba(229, 62, 62, 0.3);
+    background: rgba(229, 62, 62, 0.12);
+    color: var(--danger);
+}
+.stat-badge.stat-danger:hover {
+    background: rgba(229, 62, 62, 0.2);
 }
     </style>
 @endpush
-
-
 @section('content')
 
 
@@ -71,41 +108,41 @@
 {{-- ══════ STAT CARDS ══════ --}}
 <div class="badge-container">
 
-    <div class="stat-badge badge badge-warning">
+    <a href="{{ route('barang.index', ['type' => 'bahan_mentah']) }}" class="stat-badge stat-warning">
         <i class="fa-solid fa-box"></i>
         {{ $totalBahanMentah }} Bahan Mentah
-    </div>
+    </a>
 
-    <div class="stat-badge badge badge-success">
+    <a href="{{ route('barang.index', ['type' => 'produk_jadi']) }}" class="stat-badge stat-success">
         <i class="fa-solid fa-box-open"></i>
         {{ $totalProdukJadi }} Produk Jadi
-    </div>
+    </a>
 
-    <div class="stat-badge badge badge-info">
+    <a href="{{ route('supplier.index') }}" class="stat-badge stat-info">
         <i class="fa-solid fa-handshake"></i>
         {{ $totalSupplier }} Supplier
-    </div>
+    </a>
 
-    <div class="stat-badge badge badge-warning">
+    <a href="{{ route('pembelian.index') }}" class="stat-badge stat-warning">
         <i class="fa-solid fa-cart-shopping"></i>
         {{ $totalPembelian }} Pembelian
-    </div>
+    </a>
 
-    <div class="stat-badge badge badge-info">
+    <a href="{{ route('produksi.index') }}" class="stat-badge stat-info">
         <i class="fa-solid fa-industry"></i>
         {{ $totalProduksi }} Produksi
-    </div>
+    </a>
 
-    <div class="stat-badge badge badge-success">
+    <a href="{{ route('penjualan.index') }}" class="stat-badge stat-success">
         <i class="fa-solid fa-cash-register"></i>
         {{ $totalPenjualan }} Penjualan
-    </div>
+    </a>
 
     @if($stokRendah > 0)
-    <div class="stat-badge badge badge-danger">
+    <a href="{{ route('barang.index') }}" class="stat-badge stat-danger">
         <i class="fa-solid fa-triangle-exclamation"></i>
         {{ $stokRendah }} Stok Hampir Habis
-    </div>
+    </a>
     @endif
 
 </div>
