@@ -43,31 +43,13 @@
 
         /* Left panel — decorative */
         .login-left {
-            background: var(--espresso);
+            background: url('/assets/img/bg-kopi.jfif') center/cover no-repeat;
             padding: 50px 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-        }
-
-        .login-left::before {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139,94,60,.35) 0%, transparent 70%);
-            top: -80px; right: -80px;
-        }
-
-        .login-left::after {
-            content: '';
-            position: absolute;
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(196,154,108,.2) 0%, transparent 70%);
-            bottom: -50px; left: -50px;
         }
 
         .brand-block { position: relative; z-index: 1; }
@@ -243,18 +225,7 @@
     <div class="login-wrap">
 
         {{-- ── Left: Branding ── --}}
-        <div class="login-left">
-            <div class="brand-block">
-                <span class="brand-icon">☕</span>
-                <div class="brand-name">Kopi<br>Kurrak</div>
-                <p class="brand-tagline">
-                    Sistem informasi pencatat manajemen rantai pasok untuk usaha kopi — dari biji mentah hingga penjualan.
-                </p>
-            </div>
-
-            
-
-        </div>
+        <div class="login-left"></div>
 
         {{-- ── Right: Form ── --}}
         <div class="login-right">
