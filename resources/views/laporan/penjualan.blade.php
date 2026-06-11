@@ -16,7 +16,15 @@
         </div>
         <button type="submit" class="btn btn-secondary">🔍 Tampilkan</button>
     </form>
-    <a href="{{ route('laporan.index') }}" class="btn btn-secondary btn-sm">← Kembali</a>
+    <div style="display:flex;gap:8px;align-items:center;">
+        <a href="{{ route('laporan.penjualan.print') }}?from={{ $from }}&to={{ $to }}"
+           target="_blank"
+           class="btn btn-primary btn-sm"
+           style="display:flex;align-items:center;gap:6px;">
+            🖨️ Cetak PDF
+        </a>
+        <a href="{{ route('laporan.index') }}" class="btn btn-secondary btn-sm">← Kembali</a>
+    </div>
 </div>
 
 {{-- Total pendapatan --}}

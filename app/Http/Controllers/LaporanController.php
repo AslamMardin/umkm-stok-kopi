@@ -94,4 +94,82 @@ class LaporanController extends Controller
 
         return view('laporan.produksi', compact('data', 'from', 'to'));
     }
+
+    // ══════════════════════════════════════════════════════
+    //  PRINT / PDF VIEWS
+    // ══════════════════════════════════════════════════════
+
+    /**
+     * Halaman cetak laporan stok.
+     */
+    public function printStok(Request $request)
+    {
+        $barangs = Barang::query()
+            ->when($request->filled('type'), fn($q) => $q->where('type', $request->type))
+            ->orderBy('type')
+            ->orderBy('name')
+            ->get();
+
+        return view('laporan.print.stok', compact('barangs'));
+    }
+
+    /**
+     * Halaman cetak laporan pembelian.
+     */
+    public function printPembelian(Request $request)
+    {
+        $from = $request->input('from', now()->startOfMonth()->toDateString());
+        $to   = $request->input('to',   now()->toDateString());
+
+        $data = Pembelian::with(['supplier', 'barang'])
+            ->whereBetween('tanggal', [$from, $to])
+            ->latest('tanggal')
+            ->get();
+
+        $total = $data->sum(fn($p) => $p->qty * $p->harga_satuan);
+
+        return view('laporan.print.pembelian', compact('data', 'total', 'from', 'to'));
+    }
+
+    /**
+     * Halaman cetak laporan penjualan.
+     */
+    public function printPenjualan(Request $request)
+    {
+        $from = $request->input('from', now()->startOfMonth()->toDateString());
+        $to   = $request->input('to',   now()->toDateString());
+
+        $data = Penjualan::with('barang')
+            ->whereBetween('tanggal', [$from, $to])
+            ->latest('tanggal')
+            ->get();
+
+        $total = $data->sum(fn($p) => $p->qty * $p->harga_satuan);
+
+        $rekap = $data->groupBy('barang_id')->map(function ($items) {
+            return [
+                'barang'      => $items->first()->barang->name,
+                'total_qty'   => $items->sum('qty'),
+                'total_nilai' => $items->sum(fn($p) => $p->qty * $p->harga_satuan),
+            ];
+        })->values();
+
+        return view('laporan.print.penjualan', compact('data', 'total', 'from', 'to', 'rekap'));
+    }
+
+    /**
+     * Halaman cetak laporan produksi.
+     */
+    public function printProduksi(Request $request)
+    {
+        $from = $request->input('from', now()->startOfMonth()->toDateString());
+        $to   = $request->input('to',   now()->toDateString());
+
+        $data = Produksi::with(['bahanMentah', 'produkJadi'])
+            ->whereBetween('tanggal', [$from, $to])
+            ->latest('tanggal')
+            ->get();
+
+        return view('laporan.print.produksi', compact('data', 'from', 'to'));
+    }
 }

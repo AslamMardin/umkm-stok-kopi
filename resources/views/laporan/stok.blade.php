@@ -15,7 +15,15 @@
             </select>
         </div>
     </form>
-    <a href="{{ route('laporan.index') }}" class="btn btn-secondary btn-sm">← Kembali ke Laporan</a>
+    <div style="display:flex;gap:8px;align-items:center;">
+        <a href="{{ route('laporan.stok.print') }}{{ request('type') ? '?type='.request('type') : '' }}"
+           target="_blank"
+           class="btn btn-primary btn-sm"
+           style="display:flex;align-items:center;gap:6px;">
+            🖨️ Cetak PDF
+        </a>
+        <a href="{{ route('laporan.index') }}" class="btn btn-secondary btn-sm">← Kembali ke Laporan</a>
+    </div>
 </div>
 
 {{-- Summary Cards --}}

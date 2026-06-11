@@ -68,5 +68,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/pembelian','pembelian')->name('pembelian');
         Route::get('/penjualan','penjualan')->name('penjualan');
         Route::get('/produksi', 'produksi')->name('produksi');
+
+        // ── Print / PDF ─────────────────────────────────
+        Route::get('/stok/print',     'printStok')->name('stok.print');
+        Route::get('/pembelian/print','printPembelian')->name('pembelian.print');
+        Route::get('/penjualan/print','printPenjualan')->name('penjualan.print');
+        Route::get('/produksi/print', 'printProduksi')->name('produksi.print');
     });
+
 });
