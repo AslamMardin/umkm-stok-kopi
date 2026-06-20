@@ -43,7 +43,6 @@
 
         /* Left panel — decorative */
         .login-left {
-            background: url('/assets/img/bg-kopi.jfif') center/cover no-repeat;
             padding: 50px 40px;
             display: flex;
             flex-direction: column;
@@ -250,7 +249,7 @@
     </style>
 </head>
 <body>
-    <div class="login-wrap">
+    <div class="login-wrap" style="background: url('{{ asset('assets/img/bg-kopi.jfif') }}') center/cover no-repeat;">
 
         {{-- ── Left: Branding ── --}}
         <div class="login-left"></div>
