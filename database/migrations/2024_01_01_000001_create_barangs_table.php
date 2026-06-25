@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('barangs', function (Blueprint $table) {
             $table->id();
 
-            // Nama unik barang
-            $table->string('name')->unique();
+            // Nama barang (duplikat diperbolehkan)
+            $table->string('name');
 
             // Tipe barang: bahan_mentah atau produk_jadi
             $table->enum('type', ['bahan_mentah', 'produk_jadi']);

@@ -153,7 +153,7 @@
     {{-- Penjualan Terbaru --}}
     <div class="card">
         <div class="card-header">
-            <div class="card-title">Penjualan Terbaru</div>
+            <div class="card-title">Penjualan</div>
             <a href="{{ route('penjualan.index') }}" class="btn btn-secondary btn-sm">Lihat Semua</a>
         </div>
         <div class="table-wrap">
@@ -232,7 +232,7 @@
 {{-- Pembelian Terbaru --}}
 <div class="card">
     <div class="card-header">
-        <div class="card-title">Pembelian Terbaru</div>
+        <div class="card-title">Pembelian</div>
         <a href="{{ route('pembelian.index') }}" class="btn btn-secondary btn-sm">Lihat Semua</a>
     </div>
     <div class="table-wrap">

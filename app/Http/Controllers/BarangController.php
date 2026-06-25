@@ -47,13 +47,12 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255', 'unique:barangs,name'],
+            'name'  => ['required', 'string', 'max:255'],
             'type'  => ['required', 'in:bahan_mentah,produk_jadi'],
             'stock' => ['required', 'integer', 'min:0'],
             'satuan'=> ['required', 'string', 'max:50'],
         ], [
             'name.required'  => 'Nama barang wajib diisi.',
-            'name.unique'    => 'Nama barang sudah terdaftar.',
             'type.required'  => 'Tipe barang wajib dipilih.',
             'type.in'        => 'Tipe barang tidak valid.',
             'stock.required' => 'Stok awal wajib diisi.',
@@ -97,7 +96,7 @@ class BarangController extends Controller
     public function update(Request $request, Barang $barang)
     {
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255', 'unique:barangs,name,' . $barang->id],
+            'name'  => ['required', 'string', 'max:255'],
             'type'  => ['required', 'in:bahan_mentah,produk_jadi'],
             'stock' => ['required', 'integer', 'min:0'],
             'satuan'=> ['required', 'string', 'max:50'],

@@ -56,7 +56,7 @@
                         <label class="form-label">Satuan <span class="required">*</span></label>
                         <input type="text" name="satuan" value="{{ old('satuan') }}"
                                class="form-control {{ $errors->has('satuan') ? 'is-invalid' : '' }}"
-                               placeholder="kg, liter, pcs, gram...">
+                               placeholder="kg, liter, ton, pcs, gram...">
                         @error('satuan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
