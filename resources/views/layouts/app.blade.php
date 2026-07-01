@@ -39,6 +39,7 @@
                 </a>
             </div>
 
+            @if(auth()->user()->isAdminGudang())
             <div class="nav-section">
                 <div class="nav-section-label">Master Data</div>
 
@@ -47,7 +48,6 @@
                     <span class="icon">
                         <i class="fa-solid fa-box"></i>
                     </span> Barang
-
                 </a>
 
                 <a href="{{ route('supplier.index') }}"
@@ -93,6 +93,7 @@
                     </span> Laporan
                 </a>
             </div>
+            @endif
         </nav>
 
         {{-- User & Logout --}}
@@ -101,7 +102,15 @@
                 <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div>
                     <div class="user-name">{{ auth()->user()->name }}</div>
-                    <div class="user-role">Administrator</div>
+                    <div class="user-role">
+                        @if(auth()->user()->isAdminGudang())
+                            Admin Gudang
+                        @elseif(auth()->user()->isSupplier())
+                            Petani/Supplier
+                        @else
+                            Mitra UMKM
+                        @endif
+                    </div>
                 </div>
             </div>
 

@@ -35,45 +35,48 @@ Route::middleware('auth')->group(function () {
     // ── Logout ────────────────────────────────────────────
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ── Dashboard ─────────────────────────────────────────
+    // ── Dashboard (Dapat diakses semua role, tampilan disaring controller) ──
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // ── Barang (CRUD lengkap) ──────────────────────────────
-    Route::resource('barang', BarangController::class);
+    // ── Route khusus UMKM ──────────────────────────────────
+    Route::middleware('role:umkm')->group(function () {
+        Route::post('/umkm/beli', [PenjualanController::class, 'beli'])->name('umkm.beli');
+    });
 
-    // ── Supplier (CRUD lengkap) ────────────────────────────
-    Route::resource('supplier', SupplierController::class);
+    // ── Route khusus Admin Gudang ──────────────────────────
+    Route::middleware('role:admin_gudang')->group(function () {
+        // ── Barang (CRUD lengkap) ──────────────────────────────
+        Route::resource('barang', BarangController::class);
 
-    // ── Pembelian ──────────────────────────────────────────
-    // GET    /pembelian          → index
-    // GET    /pembelian/create   → create
-    // POST   /pembelian          → store
-    // GET    /pembelian/{id}     → show
-    // DELETE /pembelian/{id}     → destroy
-    Route::resource('pembelian', PembelianController::class)
-         ->except(['edit', 'update']); // Pembelian tidak bisa diedit, hanya dihapus + buat baru
+        // ── Supplier (CRUD lengkap) ────────────────────────────
+        Route::resource('supplier', SupplierController::class);
 
-    // ── Produksi ───────────────────────────────────────────
-    Route::resource('produksi', ProduksiController::class)
-         ->only(['index', 'create', 'store', 'show']); // Produksi hanya bisa ditambah & dilihat
+        // ── Pembelian ──────────────────────────────────────────
+        Route::resource('pembelian', PembelianController::class)
+             ->except(['edit', 'update']);
 
-    // ── Penjualan ──────────────────────────────────────────
-    Route::resource('penjualan', PenjualanController::class)
-         ->except(['edit', 'update']);
+        // ── Produksi ───────────────────────────────────────────
+        Route::resource('produksi', ProduksiController::class)
+             ->only(['index', 'create', 'store', 'show']);
 
-    // ── Laporan ───────────────────────────────────────────
-    Route::prefix('laporan')->name('laporan.')->controller(LaporanController::class)->group(function () {
-        Route::get('/',         'index')->name('index');
-        Route::get('/stok',     'stok')->name('stok');
-        Route::get('/pembelian','pembelian')->name('pembelian');
-        Route::get('/penjualan','penjualan')->name('penjualan');
-        Route::get('/produksi', 'produksi')->name('produksi');
+        // ── Penjualan (Gudang/Admin CRUD) ──────────────────────
+        Route::resource('penjualan', PenjualanController::class)
+             ->except(['edit', 'update']);
 
-        // ── Print / PDF ─────────────────────────────────
-        Route::get('/stok/print',     'printStok')->name('stok.print');
-        Route::get('/pembelian/print','printPembelian')->name('pembelian.print');
-        Route::get('/penjualan/print','printPenjualan')->name('penjualan.print');
-        Route::get('/produksi/print', 'printProduksi')->name('produksi.print');
+        // ── Laporan ───────────────────────────────────────────
+        Route::prefix('laporan')->name('laporan.')->controller(LaporanController::class)->group(function () {
+            Route::get('/',         'index')->name('index');
+            Route::get('/stok',     'stok')->name('stok');
+            Route::get('/pembelian','pembelian')->name('pembelian');
+            Route::get('/penjualan','penjualan')->name('penjualan');
+            Route::get('/produksi', 'produksi')->name('produksi');
+
+            // ── Print / PDF ─────────────────────────────────
+            Route::get('/stok/print',     'printStok')->name('stok.print');
+            Route::get('/pembelian/print','printPembelian')->name('pembelian.print');
+            Route::get('/penjualan/print','printPenjualan')->name('penjualan.print');
+            Route::get('/produksi/print', 'printProduksi')->name('produksi.print');
+        });
     });
 
 });

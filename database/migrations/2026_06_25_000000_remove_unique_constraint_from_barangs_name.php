@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('barangs', function (Blueprint $table) {
-            $table->dropUnique('barangs_name_unique');
-        });
+        if (Schema::hasIndex('barangs', 'barangs_name_unique')) {
+            Schema::table('barangs', function (Blueprint $table) {
+                $table->dropUnique('barangs_name_unique');
+            });
+        }
     }
 
     public function down(): void

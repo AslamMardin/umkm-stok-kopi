@@ -19,26 +19,17 @@ class PembelianSeeder extends Seeder
     public function run(): void
     {
         // Ambil ID supplier dan barang yang sudah di-seed
-        $supplierNusantara = Supplier::where('name', 'UD. Kopi Nusantara')->first();
-        $supplierAgro      = Supplier::where('name', 'PT. Agro Kopi Mandiri')->first();
-        $supplierGula      = Supplier::where('name', 'CV. Sejahtera Gula')->first();
-        $supplierBahan     = Supplier::where('name', 'Toko Bahan Kue Berkah')->first();
-        $supplierSusu      = Supplier::where('name', 'Distributor Susu Segar Jaya')->first();
+        $supplierNusantara = Supplier::first(); // PT. Kopi Polewali
+        $supplierAgro      = Supplier::skip(1)->first() ?? $supplierNusantara; // PT. Kopi Mandar
 
         $arabika   = Barang::where('name', 'Biji Kopi Arabika')->first();
         $robusta   = Barang::where('name', 'Biji Kopi Robusta')->first();
-        $gula      = Barang::where('name', 'Gula Pasir')->first();
-        $susu      = Barang::where('name', 'Susu Full Cream')->first();
-        $coklat    = Barang::where('name', 'Coklat Bubuk')->first();
-        $kemPouch  = Barang::where('name', 'Kemasan Pouch 250gr')->first();
-        $kemBotol  = Barang::where('name', 'Kemasan Botol 250ml')->first();
 
         $data = [
-            // ── Bulan lalu ────────────────────────────────────
             [
                 'supplier_id'  => $supplierNusantara->id,
                 'barang_id'    => $arabika->id,
-                'tanggal'      => now()->subDays(60)->toDateString(),
+                'tanggal'      => now()->subDays(30)->toDateString(),
                 'qty'          => 100,
                 'harga_satuan' => 95000,
                 'keterangan'   => 'Pembelian biji kopi arabika grade A',
@@ -46,75 +37,26 @@ class PembelianSeeder extends Seeder
             [
                 'supplier_id'  => $supplierAgro->id,
                 'barang_id'    => $robusta->id,
-                'tanggal'      => now()->subDays(55)->toDateString(),
+                'tanggal'      => now()->subDays(25)->toDateString(),
                 'qty'          => 80,
                 'harga_satuan' => 65000,
-                'keterangan'   => 'Pembelian biji kopi robusta Aceh',
+                'keterangan'   => 'Pembelian biji kopi robusta Mandar',
             ],
-            [
-                'supplier_id'  => $supplierGula->id,
-                'barang_id'    => $gula->id,
-                'tanggal'      => now()->subDays(50)->toDateString(),
-                'qty'          => 50,
-                'harga_satuan' => 14000,
-                'keterangan'   => null,
-            ],
-            [
-                'supplier_id'  => $supplierSusu->id,
-                'barang_id'    => $susu->id,
-                'tanggal'      => now()->subDays(45)->toDateString(),
-                'qty'          => 40,
-                'harga_satuan' => 22000,
-                'keterangan'   => 'Susu full cream untuk produk kopi susu',
-            ],
-            // ── Bulan ini ─────────────────────────────────────
             [
                 'supplier_id'  => $supplierNusantara->id,
                 'barang_id'    => $arabika->id,
-                'tanggal'      => now()->subDays(20)->toDateString(),
-                'qty'          => 100,
+                'tanggal'      => now()->subDays(10)->toDateString(),
+                'qty'          => 50,
                 'harga_satuan' => 97000,
-                'keterangan'   => 'Restok arabika bulan ini',
+                'keterangan'   => 'Restok arabika',
             ],
             [
                 'supplier_id'  => $supplierAgro->id,
                 'barang_id'    => $robusta->id,
-                'tanggal'      => now()->subDays(15)->toDateString(),
-                'qty'          => 70,
-                'harga_satuan' => 67000,
-                'keterangan'   => null,
-            ],
-            [
-                'supplier_id'  => $supplierBahan->id,
-                'barang_id'    => $coklat->id,
-                'tanggal'      => now()->subDays(10)->toDateString(),
-                'qty'          => 30,
-                'harga_satuan' => 55000,
-                'keterangan'   => 'Coklat bubuk untuk cappuccino',
-            ],
-            [
-                'supplier_id'  => $supplierBahan->id,
-                'barang_id'    => $kemPouch->id,
-                'tanggal'      => now()->subDays(8)->toDateString(),
-                'qty'          => 500,
-                'harga_satuan' => 800,
-                'keterangan'   => 'Kemasan pouch stand-up',
-            ],
-            [
-                'supplier_id'  => $supplierBahan->id,
-                'barang_id'    => $kemBotol->id,
                 'tanggal'      => now()->subDays(5)->toDateString(),
-                'qty'          => 300,
-                'harga_satuan' => 1500,
-                'keterangan'   => 'Botol kaca 250ml untuk sirop',
-            ],
-            [
-                'supplier_id'  => $supplierGula->id,
-                'barang_id'    => $gula->id,
-                'tanggal'      => now()->subDays(3)->toDateString(),
-                'qty'          => 50,
-                'harga_satuan' => 14500,
-                'keterangan'   => 'Restok gula',
+                'qty'          => 60,
+                'harga_satuan' => 67000,
+                'keterangan'   => 'Restok robusta',
             ],
         ];
 

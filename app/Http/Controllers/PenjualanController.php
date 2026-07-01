@@ -108,4 +108,56 @@ class PenjualanController extends Controller
         return redirect()->route('penjualan.index')
             ->with('success', 'Penjualan berhasil dihapus dan stok telah dikembalikan.');
     }
+
+    /**
+     * Memproses pesanan/pembelian produk jadi oleh UMKM.
+     */
+    public function beli(Request $request)
+    {
+        $validated = $request->validate([
+            'barang_id'    => ['required', 'exists:barangs,id'],
+            'qty'          => ['required', 'integer', 'min:1'],
+            'harga_satuan' => ['required', 'numeric', 'min:0'],
+            'keterangan'   => ['nullable', 'string', 'max:500'],
+        ], [
+            'barang_id.required'   => 'Produk wajib dipilih.',
+            'qty.required'         => 'Jumlah wajib diisi.',
+            'qty.min'              => 'Jumlah minimal 1.',
+            'harga_satuan.required'=> 'Harga satuan wajib diisi.',
+        ]);
+
+        $barang = Barang::findOrFail($validated['barang_id']);
+
+        // Validasi tipe barang
+        if ($barang->type !== 'produk_jadi') {
+            return back()->withErrors(['barang_id' => 'Hanya produk jadi yang dapat dibeli.'])->withInput();
+        }
+
+        // Validasi kecukupan stok
+        if ($barang->stock < $validated['qty']) {
+            return back()
+                ->withErrors([
+                    'qty' => "Stok gudang tidak mencukupi. Stok saat ini: {$barang->stock} {$barang->satuan}.",
+                ])
+                ->withInput();
+        }
+
+        // Tentukan data transaksi
+        $data = [
+            'barang_id'    => $validated['barang_id'],
+            'tanggal'      => now()->toDateString(),
+            'qty'          => $validated['qty'],
+            'harga_satuan' => $validated['harga_satuan'],
+            'pembeli'      => auth()->user()->name, // Nama UMKM pembeli
+            'keterangan'   => $validated['keterangan'] ?? 'Pembelian UMKM secara online',
+        ];
+
+        DB::transaction(function () use ($data, $barang) {
+            Penjualan::create($data);
+            $barang->decrement('stock', $data['qty']);
+        });
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Pembelian berhasil! Pesanan Anda telah diproses.');
+    }
 }

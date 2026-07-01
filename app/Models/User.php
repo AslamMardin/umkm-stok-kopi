@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role', 'supplier_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,5 +28,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke Supplier.
+     */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Helpers untuk pengecekan role.
+     */
+    public function isAdminGudang(): bool
+    {
+        return $this->role === 'admin_gudang';
+    }
+
+    public function isSupplier(): bool
+    {
+        return $this->role === 'supplier';
+    }
+
+    public function isUmkm(): bool
+    {
+        return $this->role === 'umkm';
     }
 }
