@@ -16,9 +16,10 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil supplier pertama untuk dihubungkan ke user supplier
-        $supplier = Supplier::first();
-        $supplierId = $supplier ? $supplier->id : null;
+        // Ambil supplier berdasarkan nama untuk dihubungkan ke user supplier
+        $supplierPolewali = Supplier::where('name', 'PT. Kopi Polewali')->first();
+        $supplierMandar = Supplier::where('name', 'PT. Kopi Mandar')->first();
+        $supplierCampalagian = Supplier::where('name', 'PT. Kopi Campalagian')->first();
 
         $users = [
             [
@@ -40,7 +41,23 @@ class UserSeeder extends Seeder
                 'email'             => 'supplier@kopi.com',
                 'password'          => Hash::make('password123'),
                 'role'              => 'supplier',
-                'supplier_id'       => $supplierId,
+                'supplier_id'       => $supplierPolewali ? $supplierPolewali->id : null,
+                'email_verified_at' => now(),
+            ],
+            [
+                'name'              => 'PT. Kopi Mandar',
+                'email'             => 'mandar@kopi.com',
+                'password'          => Hash::make('password123'),
+                'role'              => 'supplier',
+                'supplier_id'       => $supplierMandar ? $supplierMandar->id : null,
+                'email_verified_at' => now(),
+            ],
+            [
+                'name'              => 'PT. Kopi Campalagian',
+                'email'             => 'campalagian@kopi.com',
+                'password'          => Hash::make('password123'),
+                'role'              => 'supplier',
+                'supplier_id'       => $supplierCampalagian ? $supplierCampalagian->id : null,
                 'email_verified_at' => now(),
             ],
             [
@@ -60,9 +77,11 @@ class UserSeeder extends Seeder
         }
 
         $this->command->info('✅ UserSeeder: Akun multi-role berhasil dibuat.');
-        $this->command->line('   📧 admin@kopi.com    (Admin Gudang)  | 🔑 password123');
-        $this->command->line('   📧 owner@kopi.com    (Admin Gudang)  | 🔑 password123');
-        $this->command->line('   📧 supplier@kopi.com (Supplier)      | 🔑 password123');
-        $this->command->line('   📧 umkm@kopi.com     (UMKM)          | 🔑 password123');
+        $this->command->line('   📧 admin@kopi.com       (Admin Gudang)  | 🔑 password123');
+        $this->command->line('   📧 owner@kopi.com       (Admin Gudang)  | 🔑 password123');
+        $this->command->line('   📧 supplier@kopi.com    (Supplier 1)    | 🔑 password123');
+        $this->command->line('   📧 mandar@kopi.com      (Supplier 2)    | 🔑 password123');
+        $this->command->line('   📧 campalagian@kopi.com (Supplier 3)    | 🔑 password123');
+        $this->command->line('   📧 umkm@kopi.com        (UMKM)          | 🔑 password123');
     }
 }

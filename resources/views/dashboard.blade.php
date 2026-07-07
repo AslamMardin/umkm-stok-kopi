@@ -281,7 +281,7 @@
     {{-- Stok Bahan Mentah --}}
     <div class="card" style="margin-bottom: 20px;">
         <div class="card-header">
-            <div class="card-title">📦 Pasokan Bahan Mentah Anda di Gudang</div>
+            <div class="card-title">📦 Status Stok Bahan Mentah di Gudang</div>
         </div>
         <div class="table-wrap">
             <table>
@@ -310,7 +310,7 @@
                     @empty
                     <tr>
                         <td colspan="4" style="text-align:center;color:var(--latte);padding:20px;">
-                            Belum ada stok bahan mentah yang terdaftar atas pasokan Anda.
+                            Belum ada stok bahan mentah di gudang.
                         </td>
                     </tr>
                     @endforelse

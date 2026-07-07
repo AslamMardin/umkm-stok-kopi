@@ -73,10 +73,8 @@ class DashboardController extends Controller
         } elseif ($user->isSupplier()) {
             $supplierId = $user->supplier_id;
 
-            // Bahan mentah yang disuplai oleh supplier ini (berdasarkan transaksi pembelian)
-            $bahanMentahDisuplai = Barang::bahanMentah()
-                ->whereIn('id', Pembelian::where('supplier_id', $supplierId)->select('barang_id'))
-                ->get();
+            // Semua bahan mentah yang ada di gudang (agar supplier bisa memantau stok)
+            $bahanMentahDisuplai = Barang::bahanMentah()->get();
 
             // Riwayat setoran/pasokan dari supplier ini
             $riwayatSetoran = Pembelian::with('barang')
