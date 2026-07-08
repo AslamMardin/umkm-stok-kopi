@@ -419,6 +419,16 @@
                 <div class="card-title">Form Pemesanan Kopi</div>
             </div>
             <div class="card-body">
+                @if($errors->any())
+                    <div style="margin-bottom: 15px; padding: 10px 14px; border-radius: 8px; background-color: rgba(229, 62, 62, 0.1); border: 1px solid rgba(229, 62, 62, 0.25); color: #B23B3B; font-size: 13px;">
+                        <ul style="margin: 0; padding-left: 16px;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('umkm.beli') }}" method="POST" id="form-beli">
                     @csrf
                     <input type="hidden" name="barang_id" id="beli_barang_id">
