@@ -116,11 +116,14 @@ class PenjualanController extends Controller
     {
         $validated = $request->validate([
             'barang_id'    => ['required', 'exists:barangs,id'],
+            'tanggal'      => ['required', 'date'],
             'qty'          => ['required', 'integer', 'min:1'],
             'harga_satuan' => ['required', 'numeric', 'min:0'],
             'keterangan'   => ['nullable', 'string', 'max:500'],
         ], [
             'barang_id.required'   => 'Produk wajib dipilih.',
+            'tanggal.required'     => 'Tanggal pesanan wajib diisi.',
+            'tanggal.date'         => 'Format tanggal tidak valid.',
             'qty.required'         => 'Jumlah wajib diisi.',
             'qty.min'              => 'Jumlah minimal 1.',
             'harga_satuan.required'=> 'Harga satuan wajib diisi.',
@@ -145,7 +148,7 @@ class PenjualanController extends Controller
         // Tentukan data transaksi
         $data = [
             'barang_id'    => $validated['barang_id'],
-            'tanggal'      => now()->toDateString(),
+            'tanggal'      => $validated['tanggal'],
             'qty'          => $validated['qty'],
             'harga_satuan' => $validated['harga_satuan'],
             'pembeli'      => auth()->user()->name, // Nama UMKM pembeli

@@ -438,6 +438,11 @@
                         <input type="number" name="qty" id="beli_qty" class="form-control" min="1" required placeholder="Masukkan jumlah">
                     </div>
 
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;">Tanggal Pesanan</label>
+                        <input type="date" name="tanggal" id="beli_tanggal" class="form-control" required value="{{ date('Y-m-d') }}">
+                    </div>
+
                     <div style="margin-bottom:16px;">
                         <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;">Keterangan / Catatan</label>
                         <textarea name="keterangan" class="form-control" rows="3" placeholder="Contoh: Kirim ke ruko UMKM"></textarea>
