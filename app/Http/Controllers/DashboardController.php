@@ -73,8 +73,21 @@ class DashboardController extends Controller
         } elseif ($user->isSupplier()) {
             $supplierId = $user->supplier_id;
 
-            // Semua bahan mentah yang ada di gudang (agar supplier bisa memantau stok)
-            $bahanMentahDisuplai = Barang::bahanMentah()->get();
+            if (!$supplierId) {
+                // Akun supplier belum ditautkan ke data supplier manapun
+                $bahanMentahDisuplai = collect();
+                $riwayatSetoran      = collect();
+                return view('dashboard', compact('bahanMentahDisuplai', 'riwayatSetoran'));
+            }
+
+            // Hanya bahan mentah yang PERNAH disuplai oleh supplier ini
+            $barangIdDisuplai = Pembelian::where('supplier_id', $supplierId)
+                ->pluck('barang_id')
+                ->unique();
+
+            $bahanMentahDisuplai = Barang::bahanMentah()
+                ->whereIn('id', $barangIdDisuplai)
+                ->get();
 
             // Riwayat setoran/pasokan dari supplier ini
             $riwayatSetoran = Pembelian::with('barang')

@@ -8,6 +8,7 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProduksiController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // ════════════════════════════════════════════════════════
@@ -50,7 +51,8 @@ Route::middleware('auth')->group(function () {
 
         // ── Supplier (CRUD lengkap) ────────────────────────────
         Route::resource('supplier', SupplierController::class);
-
+        // ── User (Kelola user login supplier/umkm/admin) ──────
+        Route::resource('users', UserController::class);
         // ── Pembelian ──────────────────────────────────────────
         Route::resource('pembelian', PembelianController::class)
              ->except(['edit', 'update']);

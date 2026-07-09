@@ -31,11 +31,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Email</label>
+                    <label class="form-label">Email <span class="required">*</span></label>
                     <input type="email" name="email" value="{{ old('email') }}"
                            class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
                            placeholder="supplier@email.com">
                     @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <small style="color:var(--caramel);font-size:12px;display:block;margin-top:4px;">
+                        Password login supplier akan otomatis diset menjadi <strong>password123</strong>.
+                    </small>
                 </div>
 
                 <div class="form-group">

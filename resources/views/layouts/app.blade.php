@@ -56,6 +56,13 @@
                         <i class="fa-solid fa-handshake"></i>
                     </span> Supplier
                 </a>
+
+                <a href="{{ route('users.index') }}"
+                    class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-users"></i>
+                    </span> Kelola User
+                </a>
             </div>
 
             <div class="nav-section">
