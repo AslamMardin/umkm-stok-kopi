@@ -74,6 +74,7 @@
                         <th style="text-align:right;">Qty</th>
                         <th style="text-align:right;">Harga/Satuan</th>
                         <th style="text-align:right;">Total</th>
+                        <th style="text-align:center;">Status</th>
                         <th style="text-align:center;">Aksi</th>
                     </tr>
                 </thead>
@@ -88,6 +89,18 @@
                             <td style="text-align:right;">Rp {{ number_format($p->harga_satuan, 0, ',', '.') }}</td>
                             <td style="text-align:right;font-weight:600;color:var(--success);">
                                 Rp {{ number_format($p->total_harga, 0, ',', '.') }}
+                            </td>
+                            <td style="text-align:center;">
+                                <form action="{{ route('penjualan.update', $p) }}" method="POST" style="display:inline;">
+                                    @csrf @method('PUT')
+                                    <select name="status" onchange="this.form.submit()" class="form-control form-control-sm" style="display:inline-block;width:auto;min-width:130px;">
+                                        <option value="Menunggu Pembayaran" {{ $p->status == 'Menunggu Pembayaran' ? 'selected' : '' }}>Menunggu</option>
+                                        <option value="Diproses" {{ $p->status == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                                        <option value="Dikirim" {{ $p->status == 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
+                                        <option value="Selesai" {{ $p->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                        <option value="Dibatalkan" {{ $p->status == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                    </select>
+                                </form>
                             </td>
                             <td style="text-align:center;white-space:nowrap;">
                                 <a href="{{ route('penjualan.show', $p) }}" class="btn btn-secondary btn-sm">👁</a>

@@ -20,6 +20,7 @@ class Penjualan extends Model
         'harga_satuan',
         'pembeli',
         'keterangan',
+        'status',
     ];
 
     protected $casts = [
@@ -35,6 +36,18 @@ class Penjualan extends Model
     public function getTotalHargaAttribute(): float
     {
         return $this->qty * $this->harga_satuan;
+    }
+
+    public function getStatusBadgeAttribute(): string
+    {
+        return match ($this->status) {
+            'Menunggu Pembayaran' => 'warning',
+            'Diproses'            => 'info',
+            'Dikirim'             => 'primary',
+            'Selesai'             => 'success',
+            'Dibatalkan'          => 'danger',
+            default               => 'secondary',
+        };
     }
 
     // ──────────────────────────────────────────

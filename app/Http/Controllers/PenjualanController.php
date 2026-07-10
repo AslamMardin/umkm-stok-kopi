@@ -97,6 +97,21 @@ class PenjualanController extends Controller
         return view('penjualan.show', compact('penjualan'));
     }
 
+    /**
+     * Memperbarui status pesanan.
+     */
+    public function update(Request $request, Penjualan $penjualan)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'in:Menunggu Pembayaran,Diproses,Dikirim,Selesai,Dibatalkan'],
+        ]);
+
+        $penjualan->update(['status' => $validated['status']]);
+
+        return redirect()->route('penjualan.index')
+            ->with('success', 'Status pesanan berhasil diperbarui.');
+    }
+
     public function destroy(Penjualan $penjualan)
     {
         DB::transaction(function () use ($penjualan) {

@@ -61,9 +61,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('produksi', ProduksiController::class)
              ->only(['index', 'create', 'store', 'show']);
 
-        // ── Penjualan (Gudang/Admin CRUD) ──────────────────────
+        // 🛒 Penjualan (Gudang/Admin CRUD) ────────────────────
         Route::resource('penjualan', PenjualanController::class)
-             ->except(['edit', 'update']);
+             ->except(['edit']);
 
         // ── Laporan ───────────────────────────────────────────
         Route::prefix('laporan')->name('laporan.')->controller(LaporanController::class)->group(function () {
